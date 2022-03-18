@@ -2,7 +2,10 @@
  * Whole plan interfaces.
  */
 
-import { BufferLocation } from '@/enums';
+import {
+  BufferLocation, HighlightType,
+  ViewMode, Orientation,
+} from '@/enums';
 
 export interface IPlan {
   id: string;
@@ -15,6 +18,17 @@ export interface IPlan {
   ctes: any[];
   isAnalyze: boolean;
   isVerbose: boolean;
+}
+
+export interface IViewOptions {
+  menuHidden: boolean,
+  showHighlightBar: boolean,
+  showPlanStats: boolean,
+  highlightType: HighlightType,
+  viewMode: ViewMode,
+  orientation: Orientation,
+  showDiagram: boolean,
+  diagramWidth: boolean,
 }
 
 export interface ITrigger {
