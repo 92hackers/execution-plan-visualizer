@@ -5,7 +5,6 @@
 import React  from 'react'
 import { Tooltip } from 'react-tippy'
 import classNames from 'classnames'
-import _ from 'lodash'
 
 import { IViewOptions, IViewOptionsAnyOne, IPlanStats } from '@/iplan'
 import * as filters from '@/filters';

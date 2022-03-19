@@ -6,6 +6,7 @@ $connector-line: 2px solid darken($line-color, 10%);
 }
 
 .plan-container {
+  height: 100vh;
   font-family: $font-family-sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -50,7 +51,15 @@ $connector-line: 2px solid darken($line-color, 10%);
   }
 }
 
+.split-pane-wrap {
+  position: relative !important;
+  width: 100%;
+  height: 100%;
+}
+
 .plan {
+  height: 100%;
+  background-color: #f2f2f2;
 
   ol, ul {
     list-style: none;

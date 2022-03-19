@@ -34,21 +34,15 @@ export function PlanTab({
     <div className="flex-grow-1 d-flex overflow-hidden">
       <div className="flex-grow-1 overflow-hidden">
         <SplitPane
-          className='default-theme'
+          className='split-pane-wrap'
           split={'vertical'}
           onChange={handleResize}
-          size={viewOptions.diagramWidth}
+          size={viewOptions.showDiagram ? viewOptions.diagramWidth : 0}
+          minSize={0}
         >
-          {
-            viewOptions.showDiagram && (
-              <Pane
-                className="d-flex"
-                size={viewOptions.diagramWidth}
-              >
-                <div>TODO: place diagram component</div>
-              </Pane>
-            )
-          }
+          <Pane className="d-flex">
+            <div>TODO: place diagram component</div>
+          </Pane>
           <Pane className="plan d-flex flex-column flex-grow-1 grab-bing overflow-auto">
             <ul className="main-plan p-2 mb-0">
               <li>plan node here</li>

@@ -28,6 +28,10 @@ const highlightTypes: HighlightType[] = [
   HighlightType.COST,
 ]
 
+function groupBtnClass(isActive: Boolean) {
+  return classNames('btn btn-outline-secondary', { active: isActive })
+}
+
 export interface PlanTabSettingsPaneProps {
   viewOptions: IViewOptions,
   handleViewOptionsChange: (options: IViewOptionsAnyOne) => void,
@@ -71,7 +75,7 @@ export function PlanTabSettingsPane({
             viewModes.map((mode: ViewMode, index: number) => (
               <button
                 key={mode.toString()}
-                className={classNames('btn btn-outline-secondary', { active: viewOptions.viewMode === mode })}
+                className={groupBtnClass(viewOptions.viewMode === mode)}
                 onClick={() => handleViewOptionsChange({ viewMode: mode })}
               >
                 {mode}
@@ -88,7 +92,7 @@ export function PlanTabSettingsPane({
             orientations.map((orientation: Orientation) => (
               <button
                 key={orientation.toString()}
-                className={classNames('btn btn-outline-secondary', { active: viewOptions.orientation == orientation })}
+                className={groupBtnClass(viewOptions.orientation === orientation)}
                 onClick={() => handleViewOptionsChange({ orientation })}
               >
                 <i className="fa fa-sitemap"></i>
@@ -105,7 +109,8 @@ export function PlanTabSettingsPane({
           {
             highlightTypes.map((type: HighlightType) => (
               <button
-                className={classNames(`btn btn-outline-secondary`, { active: viewOptions.highlightType === type })}
+                key={type.toString()}
+                className={groupBtnClass(viewOptions.highlightType === type)}
                 onClick={() => handleViewOptionsChange({ highlightType: type })}
               >
                 {type}

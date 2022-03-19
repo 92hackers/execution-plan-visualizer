@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 
 import Plan from '@/components/Plan';
 
