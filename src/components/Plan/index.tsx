@@ -21,12 +21,14 @@ import {
   NodeProp, Orientation, ViewMode,
 } from '@/enums'
 
+import { IViewOptions, IViewOptionsAnyOne, IPlan } from '@/iplan'
+
 // Sub components
 import { TopHeader } from './TopHeader'
 import { TabContent } from './TabContent'
 
 
-const initViewOptions: any = {
+const initViewOptions: IViewOptions = {
   menuHidden: true,
   showHighlightBar: false,
   showPlanStats: true,
@@ -37,13 +39,17 @@ const initViewOptions: any = {
   diagramWidth: 20,
 };
 
-const initPlan: any = {
-  planStats: {
-    executiontime: 0,
-    triggers: [{
-      Time: 0,
-    }],
-  },
+const initPlan: IPlan = {
+  id: '',
+  name: '',
+  content: null,
+  query: '',
+  createdOn: new Date(),
+  planStats: {},
+  formattedQuery: '',
+  ctes: [],
+  isAnalyze: false,
+  isVerbose: false,
 }
 
 function Plan() {
@@ -53,6 +59,12 @@ function Plan() {
   const [viewOptions, setViewOptions] = useState(initViewOptions)
   const [plan, setPlan] = useState(initPlan)
 
+  function handleViewOptionsChange(options: IViewOptionsAnyOne): void {
+    const newViewOptions = { ...viewOptions, ...options }
+    localStorage.setItem('viewOptions', JSON.stringify(newViewOptions)) // Save to disk
+    setViewOptions(newViewOptions) // Update state
+  }
+
   return (
     <div className='plan-container d-flex flex-column overflow-hidden flex-grow-1 bg-light'>
       <TopHeader activeTab={activeTab} queryText={queryText} />
@@ -61,6 +73,7 @@ function Plan() {
         validationMessage={validationMessage}
         viewOptions={viewOptions}
         plan={plan}
+        handleViewOptionsChange={handleViewOptionsChange}
       />
     </div>
   )

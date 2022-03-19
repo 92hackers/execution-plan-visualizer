@@ -23,7 +23,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
   },
   "include": [
     "src"

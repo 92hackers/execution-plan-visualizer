@@ -7,7 +7,7 @@ import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import _ from 'lodash'
 
-import { IPlan, IViewOptions } from '@/iplan'
+import { IPlan, IViewOptions, IViewOptionsAnyOne } from '@/iplan'
 
 import { PlanStats } from './PlanStats'
 import { PlanTab } from './PlanTab'
@@ -17,6 +17,7 @@ export interface TabContentProps {
   activeTab: string,
   viewOptions: IViewOptions,
   plan: IPlan,
+  handleViewOptionsChange: (options: IViewOptionsAnyOne) => void,
 }
 
 export function TabContent({
@@ -24,6 +25,7 @@ export function TabContent({
   activeTab,
   viewOptions,
   plan,
+  handleViewOptionsChange,
 }: TabContentProps) {
   if (validationMessage) {
     return (
@@ -44,7 +46,15 @@ export function TabContent({
       <div className={classNames(
         `d-flex flex-column flex-grow-1 overflow-hidden ${viewOptions.viewMode} ${viewOptions.orientation}`)}
       >
-        { plan && <PlanStats planStats={plan.planStats} /> }
+        {
+          plan && (
+            <PlanStats
+              viewOptions={viewOptions}
+              planStats={plan.planStats}
+              handleViewOptionsChange={handleViewOptionsChange}
+            />
+          )
+        }
         <PlanTab />
       </div>
     </div>

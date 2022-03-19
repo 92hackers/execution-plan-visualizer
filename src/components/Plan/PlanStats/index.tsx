@@ -4,13 +4,15 @@
 
 import React  from 'react'
 import { Tooltip } from 'react-tippy'
+import classNames from 'classnames'
 import _ from 'lodash'
 
-import { IPlanStats } from '@/iplan'
+import { IViewOptions, IViewOptionsAnyOne, IPlanStats } from '@/iplan'
 import * as filters from '@/filters';
 import { HelpService } from '@/services/help-service';
 
 import { Triggers } from './Triggers'
+import { PlanStatsSettings } from './Settings'
 
 const helpService = new HelpService()
 
@@ -36,8 +38,13 @@ function planningTimeClass(percent: number) {
 
 export interface PlanStatsProps {
   planStats: IPlanStats,
+  viewOptions: IViewOptions,
+  handleViewOptionsChange: (options: IViewOptionsAnyOne) => void,
 }
-export function PlanStats({ planStats }: PlanStatsProps) {
+
+export function PlanStats({
+  planStats, viewOptions, handleViewOptionsChange,
+}: PlanStatsProps) {
   if (!planStats) {
     return null
   }
@@ -102,6 +109,14 @@ export function PlanStats({ planStats }: PlanStatsProps) {
         triggers={planStats.triggers || []}
         planStats={planStats}
       />
+      <PlanStatsSettings settings={planStats.settings} />
+      <button
+        onClick={() => handleViewOptionsChange({ menuHidden: !viewOptions.menuHidden})}
+        className={classNames('border-left btn btn-sm p-0 px-2 ml-auto', { 'text-primary': !viewOptions.menuHidden })}
+      >
+        <i className="fa fa-cog p-0"></i>
+        Settings
+      </button>
     </div>
   )
 }

@@ -28,7 +28,18 @@ export interface IViewOptions {
   viewMode: ViewMode,
   orientation: Orientation,
   showDiagram: boolean,
-  diagramWidth: boolean,
+  diagramWidth: number,
+}
+
+export interface IViewOptionsAnyOne {
+  menuHidden?: boolean,
+  showHighlightBar?: boolean,
+  showPlanStats?: boolean,
+  highlightType?: HighlightType,
+  viewMode?: ViewMode,
+  orientation?: Orientation,
+  showDiagram?: boolean,
+  diagramWidth?: number,
 }
 
 export interface ITrigger {

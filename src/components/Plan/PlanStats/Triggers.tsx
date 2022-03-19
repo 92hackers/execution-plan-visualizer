@@ -85,7 +85,7 @@ export function Triggers({ planStats, triggers }: TriggersProps) {
               }
             </span>
           ) : (
-            <span v-else className="text-muted">
+            <span className="text-muted">
               N/A
             </span>
           )
