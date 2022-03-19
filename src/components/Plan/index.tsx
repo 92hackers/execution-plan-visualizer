@@ -36,7 +36,7 @@ const initViewOptions: IViewOptions = {
   viewMode: ViewMode.FULL,
   orientation: Orientation.TWOD,
   showDiagram: true,
-  diagramWidth: 20,
+  diagramWidth: 300,
 };
 
 const initPlan: IPlan = {

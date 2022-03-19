@@ -55,7 +55,11 @@ export function TabContent({
             />
           )
         }
-        <PlanTab />
+        <PlanTab
+          plan={plan}
+          viewOptions={viewOptions}
+          handleViewOptionsChange={handleViewOptionsChange}
+        />
       </div>
     </div>
    </div>

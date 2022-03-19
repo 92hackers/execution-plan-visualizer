@@ -145,7 +145,7 @@
                       </diagram>
                 </pane> -->
 
-                <pane ref="plan" class="plan d-flex flex-column flex-grow-1 grab-bing overflow-auto">
+                <pane ref="plan" class="">
                   <!-- Main Plan -->
                   <ul class="main-plan p-2 mb-0">
                     <li>
@@ -164,6 +164,7 @@
                       </plan-node>
                     </li>
                   </ul>
+
                   <!-- CTE plans -->
                   <ul class="init-plans p-2 mb-0" v-if="plan.ctes.length">
                     <li v-for="node in plan.ctes">
@@ -243,6 +244,7 @@
             </div>
           </div>
         <!-- end Plan tab -->
+
         </div>
       </div>
       <!-- <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'raw' }">
