@@ -8,6 +8,7 @@ import classNames from 'classnames'
 import _ from 'lodash'
 
 import { IPlan, IViewOptions, IViewOptionsAnyOne } from '@/iplan'
+import Node from '@/inode'
 
 import { PlanStats } from './PlanStats'
 import { PlanTab } from './PlanTab'
@@ -17,6 +18,7 @@ export interface TabContentProps {
   activeTab: string,
   viewOptions: IViewOptions,
   plan: IPlan,
+  rootNode: Node,
   handleViewOptionsChange: (options: IViewOptionsAnyOne) => void,
 }
 
@@ -25,6 +27,7 @@ export function TabContent({
   activeTab,
   viewOptions,
   plan,
+  rootNode,
   handleViewOptionsChange,
 }: TabContentProps) {
   if (validationMessage) {
@@ -36,6 +39,8 @@ export function TabContent({
       </div>
     )
   }
+
+  console.log(rootNode)
 
   return (
     <div className='tab-content flex-grow-1 d-flex overflow-hidden'>

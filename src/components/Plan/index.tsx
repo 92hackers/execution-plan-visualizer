@@ -2,7 +2,7 @@
  * Main Plan compnent
  */
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import _ from 'lodash'
 
 // Required vendor style files
@@ -22,11 +22,15 @@ import {
 } from '@/enums'
 
 import { IViewOptions, IViewOptionsAnyOne, IPlan } from '@/iplan'
+import { PlanService } from '@/services/plan-service';
+import Node from '@/inode'
 
 // Sub components
 import { TopHeader } from './TopHeader'
 import { TabContent } from './TabContent'
 
+
+const planService = new PlanService()
 
 const initViewOptions: IViewOptions = {
   menuHidden: true,
@@ -52,12 +56,61 @@ const initPlan: IPlan = {
   isVerbose: false,
 }
 
-function Plan() {
+export interface PlanProps {
+  planSource: string,
+  planQuery: string,
+}
+
+function Plan({
+  planSource,
+  planQuery,
+}: PlanProps) {
   const [activeTab, setActiveTab] = useState('plan')
   const [queryText, setQueryText] = useState('')
   const [validationMessage, setValidationMessage] = useState('')
   const [viewOptions, setViewOptions] = useState(initViewOptions)
   const [plan, setPlan] = useState(initPlan)
+  const [rootNode, setRootNode] = useState(new Node(''))
+
+  // Load cached view options from localStorage
+  useEffect(() => {
+    const savedOptions = localStorage.getItem('viewOptions');
+    if (savedOptions) {
+      handleViewOptionsChange({ ...JSON.parse(savedOptions)})
+    }
+  }, [])
+
+  // Parse plan data
+  useEffect(() => {
+    let planJSON: any
+    try {
+      planJSON = planService.fromSource(planSource)
+      setValidationMessage('')
+      setActiveTab('plan')
+    } catch (e) {
+      setValidationMessage('Could not parse plan')
+      return
+    }
+    setRootNode(planJSON.Plan)
+    const qText = planJSON['Query Text'] || planQuery
+    setQueryText(qText)
+    const planData = planService.createPlan('', planJSON, qText)
+    const { content } = planData
+    setPlan({
+      ...planData,
+      planStats: {
+        executionTime: content['Execution Time'] || content['Total Runtime'] || null,
+        planningTime: content['Planning Time'] || null,
+        maxRows: content.maxRows || null,
+        maxCost: content.maxCost || null,
+        maxDuration: content.maxDuration || null,
+        maxBlocks: content.maxBlocks || null,
+        triggers: content.Triggers || [],
+        jitTime: content.JIT && content.JIT.Timing && content.JIT.Timing.Total || null,
+        settings: content.Settings,
+      },
+    })
+  }, [planSource, planQuery])
 
   function handleViewOptionsChange(options: IViewOptionsAnyOne): void {
     const newViewOptions = { ...viewOptions, ...options }
@@ -73,6 +126,7 @@ function Plan() {
         validationMessage={validationMessage}
         viewOptions={viewOptions}
         plan={plan}
+        rootNode={rootNode}
         handleViewOptionsChange={handleViewOptionsChange}
       />
     </div>
