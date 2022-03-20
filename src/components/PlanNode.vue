@@ -25,9 +25,16 @@
         @mouseleave="onMouseOutNode(node.nodeId)"
       >
         <div class="card-body header no-focus-outline" v-on:click.stop="showDetails = !showDetails">
+          <!-- #xxx Alert Tooltip for bad node -->
           <header class="mb-0">
             <h4 class="text-body">
-              <a class="font-weight-normal small" :href="`#plan/node/${node.nodeId}`" @click.stop>#{{node.nodeId}}</a>
+              <a
+                class="font-weight-normal small"
+                :href="`#plan/node/${node.nodeId}`"
+                @click.stop
+              >
+                #{{node.nodeId}}
+              </a>
               {{ getNodeName() }}
             </h4>
             <div class="float-right">
@@ -45,6 +52,7 @@
             </span>
           </header>
 
+          <!-- collapsed card detail description -->
           <div v-if="viewOptions.viewMode === viewModes.FULL" class="text-left text-monospace">
             <div v-if="node[nodeProps.RELATION_NAME]" :class="{'line-clamp-2': !showDetails}">
               <span class="text-muted">on&nbsp;</span>
@@ -91,13 +99,15 @@
           </div>
         </div>
 
-        <!-- Card Header. -->
+        <!-- Uncollapsed Card Header. -->
         <div v-if="showDetails" class="card-header border-top">
+          <!-- Node Description -->
           <div v-if="getNodeTypeDescription()" class="node-description">
             <span class="node-type">{{ node[nodeProps.NODE_TYPE] }} Node</span>
             &nbsp;
             <span v-html="getNodeTypeDescription()"></span>
           </div>
+          <!-- Node Description -->
           <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
               <a
@@ -141,9 +151,9 @@
             </li>
           </ul>
         </div>
-        <!-- Card Header. -->
+        <!-- Uncollapsed Card Header. -->
         
-        <!-- Card Body -->
+        <!-- unCollapsed Card Body -->
         <div v-if="showDetails" class="card-body tab-content">
           <div class="tab-pane" :class="{'show active': activeTab === 'general' }">
 
@@ -335,7 +345,7 @@
             <!-- misc tab -->
           </div>
         </div>
-        <!-- Card Body -->
+        <!-- Uncollapsed Card Body -->
 
       </div>
     </div>
@@ -455,11 +465,11 @@ export default class PlanNode extends Vue {
   }
 
   private workersCountClassName(index: number): string {
-    return classnames({ 'border-dashed': index >= this.workersPlannedCount });
+    return 
   }
 
   private get collapseIconClassName(): string {
-    return classnames('fa fa-fw', { 'fa-compress': !this.collapsed, 'fa-expand': this.collapsed });
+    return 
   }
 
   private created(): void {
@@ -709,7 +719,7 @@ export default class PlanNode extends Vue {
   }
 
   private get filterTooltip(): string {
-    return this.rowsRemovedPercentString + '% of rows removed by filter';
+    return this.rowsRemovedPercentString + '';
   }
 
   private get workersLaunchedCount(): number {

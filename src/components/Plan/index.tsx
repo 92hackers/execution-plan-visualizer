@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import _ from 'lodash'
 
 // Required vendor style files
-import 'bootstrap'
+// import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import 'react-tippy/dist/tippy.css'
@@ -56,6 +56,20 @@ const initPlan: IPlan = {
   isVerbose: false,
 }
 
+function getPlanStats(content: any) {
+  return {
+    executionTime: content['Execution Time'] || content['Total Runtime'] || null,
+    planningTime: content['Planning Time'] || null,
+    maxRows: content.maxRows || null,
+    maxCost: content.maxCost || null,
+    maxDuration: content.maxDuration || null,
+    maxBlocks: content.maxBlocks || null,
+    triggers: content.Triggers || [],
+    jitTime: content.JIT && content.JIT.Timing && content.JIT.Timing.Total || null,
+    settings: content.Settings,
+  }
+}
+
 export interface PlanProps {
   planSource: string,
   planQuery: string,
@@ -95,20 +109,9 @@ function Plan({
     const qText = planJSON['Query Text'] || planQuery
     setQueryText(qText)
     const planData = planService.createPlan('', planJSON, qText)
-    const { content } = planData
     setPlan({
       ...planData,
-      planStats: {
-        executionTime: content['Execution Time'] || content['Total Runtime'] || null,
-        planningTime: content['Planning Time'] || null,
-        maxRows: content.maxRows || null,
-        maxCost: content.maxCost || null,
-        maxDuration: content.maxDuration || null,
-        maxBlocks: content.maxBlocks || null,
-        triggers: content.Triggers || [],
-        jitTime: content.JIT && content.JIT.Timing && content.JIT.Timing.Total || null,
-        settings: content.Settings,
-      },
+      planStats: getPlanStats(planData.content),
     })
   }, [planSource, planQuery])
 

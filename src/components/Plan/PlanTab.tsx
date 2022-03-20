@@ -11,6 +11,7 @@ import SplitPane, { Pane } from 'react-split-pane'
 import '@/splitpane.css'
 
 import { IPlan, IViewOptionsAnyOne, IViewOptions } from '@/iplan'
+import Node from '@/inode'
 
 import { PlanTabSettingsPane } from './PlanTabSettingsPane'
 
@@ -26,6 +27,8 @@ export function PlanTab({
   viewOptions,
   handleViewOptionsChange,
 }: PlanTabProps) {
+  const [highlightNode, setHighlightNode] = useState(new Node(''))
+
   function handleResize(newSize: number) {
     handleViewOptionsChange({ diagramWidth: newSize })
   }

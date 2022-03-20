@@ -47,6 +47,14 @@ export class Orientation {
   public static CLASSIC: string = 'classic';
 }
 
+export class PlanNodeCardTab {
+  public static GENERAL: string = 'general';
+  public static IOBuffer: string = 'iobuffer';
+  public static OUTPUT: string = 'output';
+  public static WORKERS: string = 'workers';
+  public static MISC: string = 'misc';
+}
+
 export enum CenterMode {
   center,
   visible,
@@ -150,7 +158,7 @@ export enum NodeProp {
 
 // Returns the list of properties that have already been displayed either in
 // the main panel or in other detailed tabs.
-export const notMiscProperties: string[] = [
+export const NotMiscProperties: string[] = [
   NodeProp.NODE_TYPE,
   NodeProp.CTE_NAME,
   NodeProp.EXCLUSIVE_DURATION,
