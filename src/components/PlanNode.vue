@@ -64,29 +64,39 @@
               </span>
             </div>
             <div v-if="node[nodeProps.GROUP_KEY]" :class="{'line-clamp-2': !showDetails}">
-              <span class="text-muted">by</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.GROUP_KEY])"></span></div>
+              <span class="text-muted">by</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.GROUP_KEY])"></span>
+            </div>
+
             <div v-if="node[nodeProps.SORT_KEY]" :class="{'line-clamp-2': !showDetails}">
               <span class="text-muted">by</span> <span v-html="$options.filters.sortKeys(node[nodeProps.SORT_KEY], node[nodeProps.PRESORTED_KEY])"></span>
             </div>
+
             <div v-if="node[nodeProps.JOIN_TYPE]">{{node[nodeProps.JOIN_TYPE] }}
-              <span class="text-muted">join</span></div>
+              <span class="text-muted">join</span>
+            </div>
+
             <div v-if="node[nodeProps.INDEX_NAME]" :class="{'line-clamp-2': !showDetails}">
               <span class="text-muted">using</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.INDEX_NAME])"></span>
             </div>
+
             <div v-if="node[nodeProps.HASH_CONDITION]" :class="{'line-clamp-2': !showDetails}">
-              <span class="text-muted">on</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.HASH_CONDITION])"></span></div>
+              <span class="text-muted">on</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.HASH_CONDITION])"></span>
+            </div>
+
             <div v-if="node[nodeProps.CTE_NAME]">
               <a class="text-reset" href v-on:click.stop.prevent="eventBus.$emit('clickcte', 'CTE ' + node[nodeProps.CTE_NAME])">
                 <i class="fa fa-search text-muted"></i>&nbsp;<span class="text-muted">CTE</span> {{node[nodeProps.CTE_NAME]}}
               </a>
             </div>
+
           </div>
 
-          <div v-if="!allWorkersLaunched && viewOptions.viewMode === viewModes.FULL" class="text-c-3 cursor-help" :content="getHelpMessage('workers planned not launched')" v-tippy>
+          <div className="text-c-3 cursor-help" :content="getHelpMessage('')" v-tippy>
             <i class="fa fa-exclamation-triangle"></i>&nbsp;
             <span>Not all workers launched</span>
           </div>
           <div class="clearfix"></div>
+
 
           <div v-if="viewOptions.highlightType !== highlightTypes.NONE && highlightValue !== null">
             <div class="progress node-bar-container" style="height: 5px;">
@@ -97,6 +107,7 @@
               <span v-html="highlightValue"></span>
             </span>
           </div>
+
         </div>
 
         <!-- Uncollapsed Card Header. -->
@@ -619,7 +630,7 @@ export default class PlanNode extends Vue {
   }
 
   private getBarColor(percent: number) {
-    return this.colorService.numberToColorHsl(percent);
+    return this;
   }
 
   private tipIconClassName(className: string) {
