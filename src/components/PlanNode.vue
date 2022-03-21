@@ -170,7 +170,7 @@
 
             <!-- general -->
             <div v-if="plan.isAnalyze">
-              <i class="fa fa-fw fa-clock text-muted"></i>
+              <i className="fa fa-fw fa-clock text-muted"></i>
               <b>Timing:</b>&nbsp;
               <span :class="`p-0 px-1 rounded alert ${durationClass}`" v-html="formattedProp('EXCLUSIVE_DURATION')"></span>
               <template v-if="executionTimePercent !== Infinity">
@@ -393,7 +393,7 @@ import { HelpService } from '@/services/help-service';
 import { ColorService } from '@/services/color-service';
 import { cost, duration, factor, formatNodeProp, keysToString, sortKeys, truncate, rows } from '@/filters';
 import {
-  EstimateDirection, HighlightType, NodeProp, notMiscProperties,
+  EstimateDirection, HighlightType, NodeProp, NotMiscProperties,
   nodePropTypes, Orientation, PropType, ViewMode, WorkerProp,
 } from '@/enums';
 
