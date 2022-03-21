@@ -233,7 +233,7 @@
 
           <div class="tab-pane" :class="{'show active': activeTab === 'iobuffer' }">
             <!-- iobuffer tab -->
-            <div v-if="node[nodeProps.EXCLUSIVE_IO_READ_TIME] || node[nodeProps.EXCLUSIVE_IO_WRITE_TIME]" class="mb-2">
+            <div v-if="" class="mb-2">
               <b>I/O Timings:</b>
               <span v-if="node[nodeProps.EXCLUSIVE_IO_READ_TIME]" class="ml-2">
                 <b>Read:&nbsp;</b>
@@ -293,28 +293,28 @@
           </div>
 
           <div
-            :class="{ 'tab-pane': true, 'show active': activeTab === 'workers' }"
+            :class="{ '': true, 'show active': activeTab === 'workers' }"
             v-if="node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]"
           >
             <!-- workers tab -->
-            <div v-if="(node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]) && viewOptions.viewMode === viewModes.FULL">
+            <div v-if="">
               <b>Workers planned: </b>
               <span class="px-1">{{ node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER] }}</span>
               <em v-if="!node[nodeProps.WORKERS_PLANNED] && !node[nodeProps.WORKERS] && (!plan.isVerbose || !plan.isAnalyze)" class="text-warning">
                 <i class="fa fa-exclamation-triangle cursor-help" :content="getHelpMessage('fuzzy needs verbose')" v-tippy></i>
               </em>
             </div>
-            <div v-if="node[nodeProps.WORKERS_LAUNCHED] && viewOptions.viewMode === viewModes.FULL">
+            <div v-if="">
               <b>Workers launched: </b>
               <span class="px-1">{{ node[nodeProps.WORKERS_LAUNCHED] }}</span>
             </div>
-            <div v-if="!workersLaunchedCount && node[nodeProps.WORKERS_PLANNED_BY_GATHER]" class="text-muted">
+            <div v-if="" class="text-muted">
               <em>
                 Detailed information is not available.
                 <i class="fa fa-info-circle cursor-help" :content="getHelpMessage('workers detailed info missing')" v-tippy></i>
               </em>
             </div>
-            <div class="accordion" v-if="lodash.isArray(node[nodeProps.WORKERS])">
+            <div class="accordion">
               <template v-for="(worker, index) in node[nodeProps.WORKERS]">
                 <div class="card" v-bind:key="index">
                   <div class="card-header p-0">
@@ -343,6 +343,8 @@
             </div>
             <!-- workers tab -->
           </div>
+
+          <!-- misc tab begin -->
           <div class="tab-pane" :class="{'show active': activeTab === 'misc'}">
             <!-- misc tab -->
             <table class="table table-sm prop-list">
@@ -355,6 +357,7 @@
             <div class="text-muted text-right"><em>* Calculated value</em></div>
             <!-- misc tab -->
           </div>
+          <!-- misc tab end -->
         </div>
         <!-- Uncollapsed Card Body -->
 
