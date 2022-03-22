@@ -19,11 +19,21 @@ import { CardWorkers } from './CardWorkers';
 import { CollapseHandle } from './CollapseHandle';
 
 
+import { PlanNodeHeader } from './Header';
+// Sub components of plan node header
+import { HeaderDetail } from './Header/Detail';
+import { HeaderTitle } from './Header/Title';
+import { HeaderProgressbar } from './Header/ProgressBar';
+
+// import { PlanNodeBody } from './Body';
+
+
 export interface PlanNodeProps {
   plan: IPlan,
   node: Node,
   viewOptions: IViewOptions,
   selectedNodeId: number,
+  setSelectedNodeId: (id: number) => void,
 }
 
 export function PlanNode({
@@ -31,10 +41,13 @@ export function PlanNode({
   node,
   viewOptions,
   selectedNodeId,
+  setSelectedNodeId,
 }: PlanNodeProps) {
   const [activeTab, setActiveTab] = useState(PlanNodeCardTab.GENERAL)
   const [showDetails, setShowDetails] = useState(false)
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
+
+  console.log(plan)
 
   const workersPlannedReversed: number[] = useMemo((): number[] => {
     let count = node[NodeProp.WORKERS_PLANNED_BY_GATHER]
@@ -162,10 +175,98 @@ export function PlanNode({
     }
   }, [plan, viewOptions, node])
 
-  const childPlans: any[] = node[NodeProp.PLANS]
+  const durationClass: string = useMemo(() => {
+    let c;
+    const i = executionTimePercent;
+    if (i > 90) {
+      c = 4;
+    } else if (i > 40) {
+      c = 3;
+    } else if (i > 10) {
+      c = 2;
+    }
+    if (c) {
+      return 'c-' + c;
+    }
+    return '';
+  }, [executionTimePercent])
+
+  const costClass: string = useMemo(() => {
+    let c;
+    const i = costPercent;
+    if (i > 90) {
+      c = 4;
+    } else if (i > 40) {
+      c = 3;
+    } else if (i > 10) {
+      c = 2;
+    }
+    if (c) {
+      return 'c-' + c;
+    }
+    return '';
+  }, [costPercent])
+
+  const estimationClass: string = useMemo(() => {
+    let c;
+    const i = node[NodeProp.PLANNER_ESTIMATE_FACTOR];
+    if (i > 1000) {
+      c = 4;
+    } else if (i > 100) {
+      c = 3;
+    } else if (i > 10) {
+      c = 2;
+    }
+    if (c) {
+      return 'c-' + c;
+    }
+    return '';
+  }, [node])
+
+  const rowsRemovedClass: string = useMemo(() => {
+    let c;
+    // high percent of rows removed is relevant only when duration is high
+    // as well
+    const i = rowsRemovedPercent * executionTimePercent;
+    if (i > 2000) {
+      c = 4;
+    } else if (i > 500) {
+      c = 3;
+    }
+    if (c) {
+      return 'c-' + c;
+    }
+    return '';
+  }, [rowsRemovedPercent, executionTimePercent])
+
+  const heapFetchesClass: string = useMemo(() => {
+    let c;
+    const i = node[NodeProp.HEAP_FETCHES] /
+      (node[NodeProp.ACTUAL_ROWS] +
+       (node[NodeProp.ROWS_REMOVED_BY_FILTER] || 0) +
+       (node[NodeProp.ROWS_REMOVED_BY_JOIN_FILTER] || 0)
+      ) * 100;
+    if (i > 90) {
+      c = 4;
+    } else if (i > 40) {
+      c = 3;
+    } else if (i > 10) {
+      c = 2;
+    }
+    if (c) {
+      return 'c-' + c;
+    }
+    return '';
+  }, [node])
+
+  const childPlans: any[] = node[NodeProp.PLANS] || []
 
   const plannerRowEstimateDirection = node[NodeProp.PLANNER_ESTIMATE_DIRECTION];
   const plannerRowEstimateValue = node[NodeProp.PLANNER_ESTIMATE_FACTOR];
+
+  function handleClickCTE(cteName: string): void {
+    console.log(`click, redirect to cte: ${cteName}`)
+  }
 
   return (
     <div className={wrapperClass}>
@@ -182,7 +283,43 @@ export function PlanNode({
           onMouseEnter={() => console.log(`enter node: ${node.nodeId}`)}
           onMouseLeave={() => console.log(`leave node: ${node.nodeId}`)}
         >
-
+          <PlanNodeHeader
+            node={node}
+            showDetails={showDetails}
+            setShowDetails={setShowDetails}
+            viewOptions={viewOptions}
+            Title={
+              <HeaderTitle
+                node={node}
+                nodeName={nodeName}
+                durationClass={durationClass}
+                costClass={costClass}
+                estimationClass={estimationClass}
+                rowsRemovedClass={rowsRemovedClass}
+                heapFetchesClass={heapFetchesClass}
+                rowsRemoved={rowsRemoved}
+                filterTooltip={filterTooltip}
+                isNeverExecuted={isNeverExecuted}
+                viewOptions={viewOptions}
+              />
+            }
+            HeaderDetail={
+              <HeaderDetail
+                node={node}
+                viewOptions={viewOptions}
+                showDetails={showDetails}
+                onClickCTE={handleClickCTE}
+              />
+            }
+            HeaderProgressBar={
+              <HeaderProgressbar
+                viewOptions={viewOptions}
+                highlightValue={highlightValue}
+                barWidth={barWidth}
+                collapsed={collapsed}
+              />
+            }
+          />
         </div>
       </div>
       {
@@ -196,6 +333,7 @@ export function PlanNode({
                     plan={plan}
                     viewOptions={viewOptions}
                     selectedNodeId={selectedNodeId}
+                    setSelectedNodeId={setSelectedNodeId}
                   />
                 </li>
               ))

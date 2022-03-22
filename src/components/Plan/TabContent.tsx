@@ -40,31 +40,30 @@ export function TabContent({
     )
   }
 
-  console.log(rootNode)
-
   return (
     <div className='tab-content flex-grow-1 d-flex overflow-hidden'>
       <div className={classNames('tab-pane flex-grow-1 overflow-hidden', {
         'show active d-flex': activeTab === 'plan',
         })}
       >
-      <div className={classNames(
-        `d-flex flex-column flex-grow-1 overflow-hidden ${viewOptions.viewMode} ${viewOptions.orientation}`)}
+      <div className={classNames('d-flex flex-column flex-grow-1 overflow-hidden'
+        + viewOptions.viewMode + viewOptions.orientation)}
       >
+        <PlanStats
+          viewOptions={viewOptions}
+          planStats={plan.planStats}
+          handleViewOptionsChange={handleViewOptionsChange}
+        />
         {
-          plan && (
-            <PlanStats
+          plan.content && (
+            <PlanTab
+              plan={plan}
+              rootNode={rootNode}
               viewOptions={viewOptions}
-              planStats={plan.planStats}
               handleViewOptionsChange={handleViewOptionsChange}
             />
           )
         }
-        <PlanTab
-          plan={plan}
-          viewOptions={viewOptions}
-          handleViewOptionsChange={handleViewOptionsChange}
-        />
       </div>
     </div>
    </div>

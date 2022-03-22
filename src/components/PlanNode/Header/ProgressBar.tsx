@@ -26,19 +26,21 @@ export function HeaderProgressbar({
   barWidth,
   collapsed,
 }: HeaderProgressbarProps) {
-  if (viewOptions.highlightType === HighlightType.NONE || !highlightValue) return null
-
-  const progressBarStyle = {
-    width: `${barWidth}%`,
-    backgroundColor: getBarColor(barWidth),
-  }
-
   const shouldShowNodeBarLabel = useMemo(() => {
     if (collapsed || viewOptions.viewMode === ViewMode.DOT) {
       return false
     }
     return true
   }, [collapsed, viewOptions])
+
+  if (viewOptions.highlightType === HighlightType.NONE || !highlightValue) {
+    return null
+  }
+
+  const progressBarStyle = {
+    width: `${barWidth}%`,
+    backgroundColor: getBarColor(barWidth),
+  }
 
   return (
     <div>

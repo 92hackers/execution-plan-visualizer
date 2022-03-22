@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import _ from 'lodash'
 
 // Required vendor style files
-// import 'bootstrap'
+import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import 'react-tippy/dist/tippy.css'
