@@ -3,7 +3,7 @@
  * 
  */
 
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 import _ from 'lodash'
 
@@ -40,15 +40,15 @@ export function TabContent({
     )
   }
 
+  const { viewMode, orientation } = viewOptions
+
   return (
     <div className='tab-content flex-grow-1 d-flex overflow-hidden'>
       <div className={classNames('tab-pane flex-grow-1 overflow-hidden', {
         'show active d-flex': activeTab === 'plan',
         })}
       >
-      <div className={classNames('d-flex flex-column flex-grow-1 overflow-hidden'
-        + viewOptions.viewMode + viewOptions.orientation)}
-      >
+      <div className={classNames(`d-flex flex-column flex-grow-1 overflow-hidden ${viewMode} ${orientation}`)}>
         <PlanStats
           viewOptions={viewOptions}
           planStats={plan.planStats}
