@@ -162,7 +162,7 @@ export function PlanNode({
     }
   }, [plan, viewOptions, node])
 
-  const childPlans = node[NodeProp.PLANS]
+  const childPlans: any[] = node[NodeProp.PLANS]
 
   const plannerRowEstimateDirection = node[NodeProp.PLANNER_ESTIMATE_DIRECTION];
   const plannerRowEstimateValue = node[NodeProp.PLANNER_ESTIMATE_FACTOR];
@@ -185,6 +185,24 @@ export function PlanNode({
 
         </div>
       </div>
+      {
+        childPlans.length > 0 && (
+          <ul className={classNames('node-children', { collapsed })}>
+            {
+              childPlans.map((subNode: any, index: number) => (
+                <li key={index}>
+                  <PlanNode
+                    node={subNode}
+                    plan={plan}
+                    viewOptions={viewOptions}
+                    selectedNodeId={selectedNodeId}
+                  />
+                </li>
+              ))
+            }
+          </ul>
+        )
+      }
     </div>
   )
 }
