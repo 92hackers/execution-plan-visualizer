@@ -9,8 +9,7 @@ import * as _ from 'lodash';
 import Node from '@/inode';
 import {
   NodeProp, Orientation, PlanNodeCardTab, ViewMode,
-  NotMiscProperties,
-  HighlightType,
+  NotMiscProperties, HighlightType, EstimateDirection,
 } from '@/enums';
 import { IViewOptions, IPlan } from '@/iplan';
 import * as filters from '@/filters'
@@ -25,7 +24,14 @@ import { HeaderDetail } from './Header/Detail';
 import { HeaderTitle } from './Header/Title';
 import { HeaderProgressbar } from './Header/ProgressBar';
 
-// import { PlanNodeBody } from './Body';
+import { BodyHeader } from './Body/BodyHeader';
+import { PlanNodeBody } from './Body';
+// Sub components of plan node body
+import { GeneralTab } from './Body/GeneralTab';
+import { IOBufferTab } from './Body/IOBufferTab';
+import { OutputTab } from './Body/OutPutTab';
+import { WorkersTab } from './Body/WorkersTab';
+import { MiscTab } from './Body/MiscTab';
 
 
 export interface PlanNodeProps {
@@ -47,8 +53,6 @@ export function PlanNode({
   const [showDetails, setShowDetails] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
-  console.log(plan)
-
   const workersPlannedReversed: number[] = useMemo((): number[] => {
     let count = node[NodeProp.WORKERS_PLANNED_BY_GATHER]
     const result = []
@@ -66,6 +70,11 @@ export function PlanNode({
     'subplan': node[NodeProp.SUBPLAN_NAME],
     'd-flex flex-column align-items-center': viewOptions.orientation ===  Orientation.TWOD,
   })
+
+  function formattedProp(propName: keyof typeof NodeProp): string {
+    const property = NodeProp[propName];
+    return filters!.formatNodeProp(property, node[property]);
+  }
 
   const planNodeClass = classNames('text-left plan-node', {
     'detailed': showDetails,
@@ -106,15 +115,15 @@ export function PlanNode({
     return _.round((node[NodeProp.EXCLUSIVE_COST] / maxTotalCost) * 100);
   }, [plan, node])
 
-  const rowsRemovedProp: string = useMemo((): string => {
-    const keys: string[] = [
-      NodeProp.ROWS_REMOVED_BY_FILTER_REVISED,
-      NodeProp.ROWS_REMOVED_BY_JOIN_FILTER_REVISED,
-    ]
-    const nodeKey = Object.keys(node).find((key: string) => keys.includes(key));
+  const rowsRemovedProp: string = useMemo(() => {
+    const nodeKey = Object.keys(node).find(
+      (key) => key === NodeProp.ROWS_REMOVED_BY_FILTER_REVISED || key === NodeProp.ROWS_REMOVED_BY_JOIN_FILTER_REVISED,
+    );
     type NodePropStrings = keyof typeof NodeProp;
     return Object.keys(NodeProp).find((prop) => NodeProp[prop as NodePropStrings] === nodeKey) || '';
   }, [node])
+
+  console.log(rowsRemovedProp)
 
   let rowsRemoved: number = NaN
   let rowsRemovedPercent: number = NaN
@@ -259,6 +268,29 @@ export function PlanNode({
     return '';
   }, [node])
 
+  const shouldShowIoBuffers: boolean = useMemo(() => {
+    const properties: Array<keyof typeof NodeProp> = [
+      'EXCLUSIVE_SHARED_HIT_BLOCKS',
+      'EXCLUSIVE_SHARED_READ_BLOCKS',
+      'EXCLUSIVE_SHARED_DIRTIED_BLOCKS',
+      'EXCLUSIVE_SHARED_WRITTEN_BLOCKS',
+      'EXCLUSIVE_TEMP_READ_BLOCKS',
+      'EXCLUSIVE_TEMP_WRITTEN_BLOCKS',
+      'EXCLUSIVE_LOCAL_HIT_BLOCKS',
+      'EXCLUSIVE_LOCAL_READ_BLOCKS',
+      'EXCLUSIVE_LOCAL_DIRTIED_BLOCKS',
+      'EXCLUSIVE_LOCAL_WRITTEN_BLOCKS',
+      'EXCLUSIVE_IO_READ_TIME',
+      'EXCLUSIVE_IO_WRITE_TIME',
+    ];
+    const values = _.map(properties, (property) => {
+      const value = node[NodeProp[property]];
+      return _.isNaN(value) ? 0 : value;
+    });
+    const sum = _.sum(values);
+    return sum > 0;
+  }, [node])
+
   const childPlans: any[] = node[NodeProp.PLANS] || []
 
   const plannerRowEstimateDirection = node[NodeProp.PLANNER_ESTIMATE_DIRECTION];
@@ -267,6 +299,22 @@ export function PlanNode({
   function handleClickCTE(cteName: string): void {
     console.log(`click, redirect to cte: ${cteName}`)
   }
+
+  const shouldShowPlannerEstimate: boolean = useMemo(() => {
+    if ((collapsed && !showDetails) || viewOptions.viewMode === ViewMode.DOT) {
+      return false;
+    }
+    return (estimationClass || showDetails) &&
+      plannerRowEstimateDirection !== EstimateDirection.none &&
+      plannerRowEstimateValue;
+  }, [])
+
+  const workersLaunchedCount: number = useMemo((): number => {
+    if (_.isArray(node[NodeProp.WORKERS])) {
+      return node[NodeProp.WORKERS].length;
+    }
+    return parseInt(node[NodeProp.WORKERS], 0);
+  }, [node])
 
   return (
     <div className={wrapperClass}>
@@ -317,6 +365,64 @@ export function PlanNode({
                 highlightValue={highlightValue}
                 barWidth={barWidth}
                 collapsed={collapsed}
+              />
+            }
+          />
+          <BodyHeader
+            node={node}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            showDetails={showDetails}
+            shouldShowIoBuffers={shouldShowIoBuffers}
+          />
+          <PlanNodeBody
+            showDetails={showDetails}
+            GeneralTab={
+              <GeneralTab
+                node={node}
+                plan={plan}
+                activeTab={activeTab}
+                durationClass={durationClass}
+                formattedProp={formattedProp}
+                shouldShowPlannerEstimate={shouldShowPlannerEstimate}
+                plannerRowEstimateDirection={plannerRowEstimateDirection}
+                plannerRowEstimateValue={plannerRowEstimateValue}
+                estimationClass={estimationClass}
+                rowsRemoved={rowsRemoved}
+                rowsRemovedProp={rowsRemovedProp as keyof typeof NodeProp}
+                rowsRemovedClass={rowsRemovedClass}
+                rowsRemovedPercentString={rowsRemovedPercentString}
+                heapFetchesClass={heapFetchesClass}
+                costClass={costClass}
+              />
+            }
+            IOBufferTab={
+              <IOBufferTab
+                node={node}
+                activeTab={activeTab}
+                formattedProp={formattedProp}
+              />
+            }
+            OutPutTab={
+              <OutputTab
+                activeTab={activeTab}
+                formattedProp={formattedProp}
+              />
+            }
+            WorkersTab={
+              <WorkersTab
+                node={node}
+                plan={plan}
+                activeTab={activeTab}
+                formattedProp={formattedProp}
+                viewOptions={viewOptions}
+                workersLaunchedCount={workersLaunchedCount}
+              />
+            }
+            MiscTab={
+              <MiscTab
+                activeTab={activeTab}
+                miscProps={miscProps}
               />
             }
           />

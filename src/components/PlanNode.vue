@@ -285,15 +285,13 @@
             <!-- iobuffer tab -->
           </div>
 
-          <div
-            :class="{ 'tab-pane overflow-auto text-monospace': true, 'show active': activeTab === 'output' }"
+          <div :class="{ 'tab-pane overflow-auto text-monospace': true, 'show active': activeTab === 'output' }"
             v-html="formattedProp('OUTPUT')" style="max-height: 200px"
           >
             <!-- output tab -->
           </div>
 
-          <div
-            :class="{ '': true, 'show active': activeTab === 'workers' }"
+          <div :class="{ '': true, 'show active': activeTab === 'workers' }"
             v-if="node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]"
           >
             <!-- workers tab -->

@@ -5,27 +5,31 @@
 import React from 'react'
 
 import Node from '@/inode'
-import { NodeProp } from '@/enums'
-import * as filters from '@/filters'
 
 export interface PlanNodeBodyProps {
-  node: Node,
   showDetails: boolean,
+  GeneralTab: React.ReactElement,
+  IOBufferTab: React.ReactElement,
+  OutPutTab: React.ReactElement,
+  WorkersTab: React.ReactElement,
+  MiscTab: React.ReactElement,
 }
 export function PlanNodeBody({
-  node,
   showDetails,
+  GeneralTab,
+  IOBufferTab,
+  OutPutTab,
+  WorkersTab,
+  MiscTab,
 }: PlanNodeBodyProps) {
   if (!showDetails) return null
-
-  function formattedProp(propName: keyof typeof NodeProp): string {
-    const property = NodeProp[propName];
-    return filters!.formatNodeProp(property, node[property]);
-  }
-
   return (
     <div className='card-body tab-content'>
-
+      {GeneralTab}
+      {IOBufferTab}
+      {OutPutTab}
+      {WorkersTab}
+      {MiscTab}
     </div>
   )
 }

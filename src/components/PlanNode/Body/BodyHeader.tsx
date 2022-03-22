@@ -16,18 +16,19 @@ export interface BodyHeaderProps {
   activeTab: PlanNodeCardTab,
   showDetails: boolean,
   shouldShowIoBuffers: boolean,
-  setActiveTab: (tab: PlanNodeCardTab) => void,
+  setActiveTab: (tab: string) => void,
 }
 export function BodyHeader({
   node,
   activeTab,
+  setActiveTab,
   showDetails,
   shouldShowIoBuffers,
-  setActiveTab,
 }: BodyHeaderProps) {
   if (!showDetails) return null
 
   const nodeTypeDesc = helpService.getNodeTypeDescription(node[NodeProp.NODE_TYPE])
+
   return (
     <div className="card-header border-top">
       {
@@ -51,7 +52,7 @@ export function BodyHeader({
             href="#"
             onClick={() => setActiveTab(PlanNodeCardTab.IOBuffer)}
             className={classNames('nav-link text-nowrap', {
-              active: activeTab === PlanNodeCardTab.GENERAL,
+              active: activeTab === PlanNodeCardTab.IOBuffer,
               disabled: !shouldShowIoBuffers,
             })}
           >IO & Buffers</a>

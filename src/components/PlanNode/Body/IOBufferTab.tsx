@@ -48,34 +48,36 @@ export function IOBufferTab({
       }
       <b>Blocks:</b>
       <table className="table table-sm">
-        <tr>
-          <td></td>
-          <th className="text-right" style={{ width: '25%' }}>Hit</th>
-          <th className="text-right" style={{ width: '25%' }}>Read</th>
-          <th className="text-right" style={{ width: '25%' }}>Dirtied</th>
-          <th className="text-right" style={{ width: '25%' }}>Written</th>
-        </tr>
-        <tr>
-          <th>Shared</th>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_HIT_BLOCKS') || '-' }}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_READ_BLOCKS') || '-' }}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_DIRTIED_BLOCKS') || '-'}}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_WRITTEN_BLOCKS') || '-'}}></td>
-        </tr>
-        <tr>
-          <th>Temp</th>
-          <td className="text-right bg-hatched"></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_TEMP_READ_BLOCKS') || '-'}}></td>
-          <td className="text-right bg-hatched"></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_TEMP_WRITTEN_BLOCKS') || '-'}}></td>
-        </tr>
-        <tr>
-          <th>Local</th>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_HIT_BLOCKS') || '-'}}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_READ_BLOCKS') || '-'}}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_DIRTIED_BLOCKS') || '-'}}></td>
-          <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_WRITTEN_BLOCKS') || '-'}}></td>
-        </tr>
+        <tbody>
+          <tr>
+            <td></td>
+            <th className="text-right" style={{ width: '25%' }}>Hit</th>
+            <th className="text-right" style={{ width: '25%' }}>Read</th>
+            <th className="text-right" style={{ width: '25%' }}>Dirtied</th>
+            <th className="text-right" style={{ width: '25%' }}>Written</th>
+          </tr>
+          <tr>
+            <th>Shared</th>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_HIT_BLOCKS') || '-' }}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_READ_BLOCKS') || '-' }}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_DIRTIED_BLOCKS') || '-'}}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_SHARED_WRITTEN_BLOCKS') || '-'}}></td>
+          </tr>
+          <tr>
+            <th>Temp</th>
+            <td className="text-right bg-hatched"></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_TEMP_READ_BLOCKS') || '-'}}></td>
+            <td className="text-right bg-hatched"></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_TEMP_WRITTEN_BLOCKS') || '-'}}></td>
+          </tr>
+          <tr>
+            <th>Local</th>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_HIT_BLOCKS') || '-'}}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_READ_BLOCKS') || '-'}}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_DIRTIED_BLOCKS') || '-'}}></td>
+            <td className="text-right" dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_LOCAL_WRITTEN_BLOCKS') || '-'}}></td>
+          </tr>
+        </tbody>
       </table>
       {
         node[nodeProps.WAL_RECORDS] || node[nodeProps.WAL_BYTES] && (

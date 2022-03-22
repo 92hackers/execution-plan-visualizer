@@ -27,19 +27,21 @@ export function MiscTab({
   return (
     <div className={classNames('tab-pane', { 'show active': activeTab === PlanNodeCardTab.MISC })}>
       <table className="table table-sm prop-list">
-        {
-          miscProps.map((prop: any, index: number) => {
-            if (!shouldShowProp(prop.key, prop.value)) {
-              return null
-            }
-            return (
-              <tr key={index}>
-                <td style={{ width: '40%' }}>{prop.key}</td>
-                <td dangerouslySetInnerHTML={{ __html: filters.formatNodeProp(prop.key, prop.value) }} />
-              </tr>
-            )
-          })
-        }
+        <tbody>
+          {
+            miscProps.map((prop: any, index: number) => {
+              if (!shouldShowProp(prop.key, prop.value)) {
+                return null
+              }
+              return (
+                <tr key={index}>
+                  <td style={{ width: '40%' }}>{prop.key}</td>
+                  <td dangerouslySetInnerHTML={{ __html: filters.formatNodeProp(prop.key, prop.value) }} />
+                </tr>
+              )
+            })
+          }
+        </tbody>
       </table>
       <div className="text-muted text-right"><em>* Calculated value</em></div>
     </div>
