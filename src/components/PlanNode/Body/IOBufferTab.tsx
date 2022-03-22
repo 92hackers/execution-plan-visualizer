@@ -21,24 +21,26 @@ export function IOBufferTab({
   formattedProp,
 }: IOBufferTabProps) {
   const nodeProps = NodeProp
+  const ioReadTime = node[nodeProps.EXCLUSIVE_IO_READ_TIME]
+  const ioWriteTime = node[nodeProps.EXCLUSIVE_IO_WRITE_TIME]
   return (
     <div className={classNames('tab-pane', {'show active': activeTab === PlanNodeCardTab.IOBuffer})}>
       {
-        node[nodeProps.EXCLUSIVE_IO_READ_TIME] || node[nodeProps.EXCLUSIVE_IO_WRITE_TIME] && (
+        ioReadTime > 0 || ioWriteTime > 0 && (
           <div className="mb-2">
             <b>I/O Timings:</b>
             {
-              node[nodeProps.EXCLUSIVE_IO_READ_TIME] && (
+              ioReadTime > 0 && (
                 <span className="ml-2">
-                  <b>Read:&nbsp;</b>
+                  <b className="mr-1">Read:</b>
                   {formattedProp('EXCLUSIVE_IO_READ_TIME')}
                 </span>
               )
             }
             {
-              node[nodeProps.EXCLUSIVE_IO_WRITE_TIME] && (
+              ioWriteTime > 0 && (
                 <span className="ml-2">
-                  <b>Write:&nbsp;</b>
+                  <b className="mr-1">Write:</b>
                   {formattedProp('EXCLUSIVE_IO_WRITE_TIME')}
                 </span>
               )
@@ -80,7 +82,7 @@ export function IOBufferTab({
         </tbody>
       </table>
       {
-        node[nodeProps.WAL_RECORDS] || node[nodeProps.WAL_BYTES] && (
+        node[nodeProps.WAL_RECORDS] > 0 || node[nodeProps.WAL_BYTES] > 0 && (
           <div className="mb-2">
             <b>
               <Tooltip title="Write-Ahead Logging">

@@ -36,7 +36,7 @@ export function HeaderDetail({
             {
               node[NodeProp.ALIAS] && (
                 <span>
-                  <span className='text-muted'>as</span>
+                  <span className='text-muted ml-1 mr-1'>as</span>
                   {node[NodeProp.ALIAS]}
                 </span>
               )
@@ -64,7 +64,7 @@ export function HeaderDetail({
         node[NodeProp.JOIN_TYPE] && (
           <div>
             {node[NodeProp.JOIN_TYPE]}
-            <span className="text-muted">join</span>
+            <span className="text-muted ml-1">join</span>
           </div>
         )
       }
@@ -86,14 +86,14 @@ export function HeaderDetail({
       }
       {
         node[NodeProp.CTE_NAME] && (
-              <a
-                className="text-reset"
-                onClick={() => onClickCTE(`CTE ${node[NodeProp.CTE_NAME]}`)}
-                href="#"
-              >
-                <i className="fa fa-search text-muted"></i>&nbsp;
-                <span className="text-muted">CTE&nbsp;</span>{ node[NodeProp.CTE_NAME] }
-              </a>
+          <a
+            className="text-reset"
+            onClick={() => onClickCTE(`CTE ${node[NodeProp.CTE_NAME]}`)}
+            href="#"
+          >
+            <i className="fa fa-search text-muted"></i>&nbsp;
+            <span className="text-muted">CTE&nbsp;</span>{node[NodeProp.CTE_NAME]}
+          </a>
         )
       }
     </div>

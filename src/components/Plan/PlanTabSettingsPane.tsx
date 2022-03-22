@@ -95,8 +95,8 @@ export function PlanTabSettingsPane({
                 className={groupBtnClass(viewOptions.orientation === orientation)}
                 onClick={() => handleViewOptionsChange({ orientation })}
               >
-                <i className="fa fa-sitemap"></i>
-                {orientation}
+                <i className="fa fa-sitemap mr-2" />
+                { orientation === Orientation.TWOD ? '2D' : orientation }
               </button>
             ))
           }

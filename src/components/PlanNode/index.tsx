@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import Node from '@/inode';
 import {
   NodeProp, Orientation, PlanNodeCardTab, ViewMode,
-  NotMiscProperties, HighlightType, EstimateDirection,
+  HighlightType, EstimateDirection,
 } from '@/enums';
 import { IViewOptions, IPlan } from '@/iplan';
 import * as filters from '@/filters'
@@ -123,10 +123,8 @@ export function PlanNode({
     return Object.keys(NodeProp).find((prop) => NodeProp[prop as NodePropStrings] === nodeKey) || '';
   }, [node])
 
-  console.log(rowsRemovedProp)
-
-  let rowsRemoved: number = NaN
-  let rowsRemovedPercent: number = NaN
+  let rowsRemoved: number = 0
+  let rowsRemovedPercent: number = 0
   let rowsRemovedPercentString: string = ''
   if (rowsRemovedProp) {
     type NodePropStrings = keyof typeof NodeProp;

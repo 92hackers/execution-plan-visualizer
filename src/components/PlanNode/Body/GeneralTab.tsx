@@ -57,8 +57,8 @@ export function GeneralTab({
       {
         plan.isAnalyze && (
           <div>
-              <i className="fa fa-fw fa-clock text-muted"></i>
-              <b>Timing:</b>&nbsp;
+              <i className="fa fa-fw fa-clock text-muted mr-1"></i>
+              <b>Timing:</b>
               <span
                 className={`p-0 px-1 rounded alert ${durationClass}`}
                 dangerouslySetInnerHTML={{ __html: formattedProp('EXCLUSIVE_DURATION') }}
@@ -67,7 +67,7 @@ export function GeneralTab({
         )
       }
       <div>
-        <i className="fa fa-fw fa-align-justify text-muted"></i>
+        <i className="fa fa-fw fa-align-justify text-muted mr-1"></i>
         <b>Rows:</b>
         <span className="px-1">{tilde + formattedProp('ACTUAL_ROWS_REVISED')}</span>
         {
@@ -80,7 +80,7 @@ export function GeneralTab({
         {
           plannerRowEstimateDirection !== EstimateDirection.none && shouldShowPlannerEstimate && (
             <span>
-              |
+              <span className="mx-1">|</span>
               {
                 plannerRowEstimateDirection === EstimateDirection.over && (
                   <span><i className="fa fa-arrow-up"></i> over</span>
@@ -91,7 +91,7 @@ export function GeneralTab({
                   <span><i className="fa fa-arrow-down"></i> under</span>
                 )
               }
-              estimated
+              <span className="mx-1">estimated</span>
               {
                 plannerRowEstimateValue !== Infinity && (
                   <span>
@@ -109,7 +109,7 @@ export function GeneralTab({
         {
           rowsRemoved > 0 && (
             <div>
-              <i className="fa fa-fw fa-filter text-muted"></i>
+              <i className="fa fa-fw fa-filter text-muted mr-1"></i>
               <b>
                 {NodeProp[rowsRemovedProp]}:
               </b>
@@ -121,9 +121,9 @@ export function GeneralTab({
           )
         }
         {
-          node[NodeProp.HEAP_FETCHES] && (
+          node[NodeProp.HEAP_FETCHES] > 0 && (
             <div>
-              <i className="fa fa-fw fa-exchange-alt text-muted"></i>
+              <i className="fa fa-fw fa-exchange-alt text-muted mr-1"></i>
               <b>Heap Fetches:</b>&nbsp;
               <span
                 className={`p-0 px-1 rounded alert ${heapFetchesClass}`}
@@ -143,19 +143,19 @@ export function GeneralTab({
           )
         }
         {
-          node[NodeProp.EXCLUSIVE_COST] && (
+          node[NodeProp.EXCLUSIVE_COST] > 0 && (
             <div>
-              <i className="fa fa-fw fa-dollar-sign text-muted"></i>
+              <i className="fa fa-fw fa-dollar-sign text-muted mr-1"></i>
               <b>Cost:</b>
-              <span className={`p-0 px-1 mr-1 alert ${costClass}`}>{formattedProp('EXCLUSIVE_COST')}</span>
+              <span className={`p-0 mx-1 px-1 mr-1 alert ${costClass}`}>{formattedProp('EXCLUSIVE_COST')}</span>
               <span className="text-muted">(Total: {formattedProp('TOTAL_COST')})</span>
             </div>
           )
         }
         {
-          node[NodeProp.ACTUAL_LOOPS] && (
+          node[NodeProp.ACTUAL_LOOPS] > 0 && (
             <div>
-              <i className="fa fa-fw fa-undo text-muted"></i>
+              <i className="fa fa-fw fa-undo text-muted mr-1"></i>
               <b>Loops:</b>
               <span className="px-1">{formattedProp('ACTUAL_LOOPS')}</span>
             </div>

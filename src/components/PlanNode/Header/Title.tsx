@@ -47,7 +47,12 @@ export function HeaderTitle({
   return (
     <header className="mb-0">
       <h4 className="text-body">
-        <a className="font-weight-normal small" href={`#plan/node/${node.nodeId}`}>#{node.nodeId}</a>
+        <a
+          className="font-weight-normal small mr-1"
+          href={`#plan/node/${node.nodeId}`}
+        >
+          #{node.nodeId}
+        </a>
         {nodeName}
       </h4>
       <div className="float-right">
@@ -102,7 +107,7 @@ export function HeaderTitle({
           )
         }
         {
-          rowsRemoved && !rowsRemovedClass && (
+          rowsRemoved > 0 && !rowsRemovedClass && (
             <Tooltip
               className='p-0  d-inline-block mb-0 ml-1 text-nowrap'
               title={filterTooltip}
