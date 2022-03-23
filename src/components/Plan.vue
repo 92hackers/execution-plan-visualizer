@@ -1,19 +1,20 @@
 <template>
   <div class="plan-container d-flex flex-column overflow-hidden flex-grow-1 bg-light">
     <div>
+      <!-- Global top header navbar -->
       <ul class="nav nav-pills">
         <li class="nav-item p-1">
           <a class="nav-link px-2 py-0" :class="{'active' : activeTab === 'plan' }" href="#plan">Plan</a>
         </li>
-        <!-- <li class="nav-item p-1">
+        <li class="nav-item p-1">
           <a class="nav-link px-2 py-0" :class="{'active' : activeTab === 'raw' }" href="#raw">Raw</a>
         </li>
         <li class="nav-item p-1">
           <a class="nav-link px-2 py-0" :class="{'active' : activeTab === 'query', 'disabled': !queryText }" href="#query">Query</a>
-        </li> -->
-        <!-- <li class="nav-item p-1">
+        </li>
+        <li class="nav-item p-1">
           <a class="nav-link px-2 py-0" :class="{'active' : activeTab === 'stats' }" href="#stats">Stats</a>
-        </li> -->
+        </li>
       </ul>
     </div>
 
@@ -128,22 +129,23 @@
             <div class="flex-grow-1 overflow-hidden">
               <splitpanes class="default-theme" @resize="viewOptions.diagramWidth = $event[0].size">
 
-                <!-- <pane
-                      :size="viewOptions.diagramWidth"
-                      class="d-flex"
-                      v-if="viewOptions.showDiagram"
-                      >
-                      <diagram
-                        ref="diagram"
-                        :plan="plan"
-                        :eventBus="eventBus"
-                        class="d-flex flex-column flex-grow-1 overflow-hidden plan-diagram"
-                        >
-                        <template v-slot:nodeindex="{ node }">
-                          <slot name="nodeindex" v-bind:node="node"></slot>
-                        </template>
-                      </diagram>
-                </pane> -->
+                <!-- Diagram pane of Plan tab -->
+                <pane
+                  :size="viewOptions.diagramWidth"
+                  class="d-flex"
+                  v-if="viewOptions.showDiagram"
+                >
+                  <diagram
+                    ref="diagram"
+                    :plan="plan"
+                    :eventBus="eventBus"
+                    class="d-flex flex-column flex-grow-1 overflow-hidden plan-diagram"
+                    >
+                    <template v-slot:nodeindex="{ node }">
+                      <slot name="nodeindex" v-bind:node="node"></slot>
+                    </template>
+                  </diagram>
+                </pane>
 
                 <pane ref="plan" class="">
                   <!-- Main Plan -->
@@ -180,6 +182,8 @@
               </splitpanes>
 
             </div>
+
+            <!-- Plan pane menu to select. -->
             <div class="small p-2 border-left" v-if="plan && !viewOptions.menuHidden">
               <div class="text-right clearfix">
                 <button type="button" class="close" aria-label="Close" @click="viewOptions.menuHidden = true">
@@ -247,7 +251,9 @@
 
         </div>
       </div>
-      <!-- <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'raw' }">
+
+      <!-- Raw global tab -->
+      <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'raw' }">
         <div class="overflow-hidden d-flex w-100 h-100">
           <div class="overflow-auto flex-grow-1">
             <pre class="small p-2 mb-0"><code v-html="$options.filters.json(planSource)"></code></pre>
@@ -255,6 +261,8 @@
           <copy :content="planSource" />
         </div>
       </div>
+
+      <!-- Show SQL Query global tab -->
       <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'query' }" v-if="queryText">
         <div class="overflow-hidden d-flex w-100 h-100">
           <div class="overflow-auto flex-grow-1">
@@ -262,13 +270,15 @@
           </div>
         </div>
         <copy :content="queryText" />
-      </div> -->
-      <!-- <div class="tab-pane flex-grow-1 overflow-auto" :class="{'show active': activeTab === 'stats' }">
+      </div>
+
+      <!-- Stats global tab -->
+      <div class="tab-pane flex-grow-1 overflow-auto" :class="{'show active': activeTab === 'stats' }">
         <stats
           :plan="plan"
         >
         </stats>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>

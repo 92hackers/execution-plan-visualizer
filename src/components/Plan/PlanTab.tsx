@@ -2,13 +2,13 @@
  * Plan Tab
  */
 
-import React, { useState } from 'react'
-import _ from 'lodash'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import SplitPane, { Pane } from 'react-split-pane'
 import '@/splitpane.css'
 
 import { IPlan, IViewOptionsAnyOne, IViewOptions } from '@/iplan'
 import Node from '@/inode'
+import Dragscroll from '@/dragscroll'
 
 import { PlanTabSettingsPane } from './PlanTabSettingsPane'
 import { PlanNode } from '../PlanNode'
@@ -34,6 +34,13 @@ export function PlanTab({
     handleViewOptionsChange({ diagramWidth: newSize })
   }
 
+  // Here, we use useCallback to create a ref,
+  // which will call the function when the ref attached to the element.
+  const planRef = useCallback((elem) => {
+    // Bind drag && scroll events onto plan element.
+    const scroll = new Dragscroll(elem)
+  }, [])
+
   return (
     <div className="flex-grow-1 d-flex overflow-hidden">
       <div className="flex-grow-1 overflow-hidden">
@@ -47,7 +54,10 @@ export function PlanTab({
           <Pane className="d-flex">
             <div>TODO: place diagram component</div>
           </Pane>
-          <Pane className="plan d-flex flex-column flex-grow-1 grab-bing overflow-auto">
+          <Pane
+            eleRef={planRef}
+            className="plan d-flex flex-column flex-grow-1 grab-bing overflow-auto"
+          >
             <ul className="main-plan p-2 mb-0">
               <li>
                 <PlanNode
