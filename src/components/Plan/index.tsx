@@ -9,7 +9,7 @@ import _ from 'lodash'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.css'
-import 'react-tippy/dist/tippy.css'
+import 'tippy.js/dist/tippy.css'
 import 'highlight.js/styles/github.css'
 
 // Custom style files

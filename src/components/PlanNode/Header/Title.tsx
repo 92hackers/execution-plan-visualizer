@@ -4,7 +4,7 @@
 
 import React from 'react'
 import classNames from 'classnames'
-import { Tooltip } from 'react-tippy'
+import Tippy from '@tippyjs/react';
 
 import { IViewOptions } from '@/iplan';
 import Node from '@/inode';
@@ -58,62 +58,56 @@ export function HeaderTitle({
       <div className="float-right">
         {
           durationClass && (
-            <Tooltip
-              className={tipIconClassName(durationClass)}
-              title='Slow'
-            >
-              <i className="fa fa-fw fa-clock"></i>
-            </Tooltip>
+            <Tippy content='Slow'>
+              <span className={tipIconClassName(durationClass)}>
+                <i className="fa fa-fw fa-clock"></i>
+              </span>
+            </Tippy>
           )
         }
         {
           costClass && (
-            <Tooltip
-              className={tipIconClassName(costClass)}
-              title='Cost is high'
-            >
-              <i className="fa fa-fw fa-dollar-sign"></i>
-            </Tooltip>
+            <Tippy content='Cost is high'>
+              <span className={tipIconClassName(costClass)}>
+                <i className="fa fa-fw fa-dollar-sign"></i>
+              </span>
+            </Tippy>
           )
         }
         {
           estimationClass && (
-            <Tooltip
-              className={tipIconClassName(estimationClass)}
-              title='Bad estimation for number of rows'
-            >
-              <i className="fa fa-fw fa-thumbs-down"></i>
-            </Tooltip>
+            <Tippy content='Bad estimation for number of rows'>
+              <span className={tipIconClassName(estimationClass)}>
+                <i className="fa fa-fw fa-thumbs-down"></i>
+              </span>
+            </Tippy>
           )
         }
         {
           rowsRemovedClass && (
-            <Tooltip
-              className={tipIconClassName(rowsRemovedClass)}
-              title={filterTooltip}
-            >
-              <i className="fa fa-fw fa-filter"></i>
-            </Tooltip>
+            <Tippy content={filterTooltip}>
+              <span className={tipIconClassName(rowsRemovedClass)}>
+                <i className="fa fa-fw fa-filter"></i>
+              </span>
+            </Tippy>
           )
         }
         {
           heapFetchesClass && (
-            <Tooltip
-              className={tipIconClassName(heapFetchesClass)}
-              title='Heap Fetches number is high'
-            >
-              <i className="fa fa-fw fa-exchange-alt"></i>
-            </Tooltip>
+            <Tippy content='Heap Fetches number is high'>
+              <span className={tipIconClassName(heapFetchesClass)}>
+                <i className="fa fa-fw fa-exchange-alt"></i>
+              </span>
+            </Tippy>
           )
         }
         {
           rowsRemoved > 0 && !rowsRemovedClass && (
-            <Tooltip
-              className='p-0  d-inline-block mb-0 ml-1 text-nowrap'
-              title={filterTooltip}
-            >
-              <i className="fa fa-fw fa-filter text-muted"></i>
-            </Tooltip>
+            <Tippy content={filterTooltip}>
+              <span className='p-0 d-inline-block mb-0 ml-1 text-nowrap'>
+                <i className="fa fa-fw fa-filter text-muted"></i>
+              </span>
+            </Tippy>
           )
         }
       </div>

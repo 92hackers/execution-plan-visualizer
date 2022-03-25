@@ -4,7 +4,7 @@
 
 import React from "react"
 import classNames from "classnames"
-import { Tooltip } from "react-tippy"
+import Tippy from "@tippyjs/react"
 
 import { PlanNodeCardTab, NodeProp, EstimateDirection } from "@/enums"
 import { IPlan } from "@/iplan"
@@ -132,11 +132,9 @@ export function GeneralTab({
               &nbsp;
               {
                 heapFetchesClass && (
-                  <Tooltip
-                    title="Visibility map may be out-of-date. Consider using VACUUM or change autovacuum settings."
-                  >
+                  <Tippy content="Visibility map may be out-of-date. Consider using VACUUM or change autovacuum settings.">
                     <i className="fa fa-fw fa-info-circle text-muted" />
-                  </Tooltip>
+                  </Tippy>
                 )
               }
             </div>

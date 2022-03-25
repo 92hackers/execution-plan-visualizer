@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo } from 'react'
-import { Tooltip } from 'react-tippy'
+import Tippy from '@tippyjs/react'
 
 import Node from '@/inode'
 import { NodeProp } from '@/enums'
@@ -50,10 +50,12 @@ export function PlanNodeHeader({
       {HeaderDetail}
       {
         !allWorkersLaunched && viewOptions.viewMode === ViewMode.FULL && (
-          <Tooltip title={helpService.getHelpMessage('workers planned not launched')}>
-            <i className="fa fa-exclamation-triangle"></i>&nbsp;
-            <span>Not all workers launched</span>
-          </Tooltip>
+          <Tippy content={helpService.getHelpMessage('workers planned not launched')}>
+            <span>
+              <i className="fa fa-exclamation-triangle"></i>&nbsp;
+              <span>Not all workers launched</span>
+            </span>
+          </Tippy>
         )
       }
       <div className="clearfix"></div>

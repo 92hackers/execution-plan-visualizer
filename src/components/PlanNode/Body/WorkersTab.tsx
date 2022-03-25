@@ -4,7 +4,7 @@
 
 import React, { useMemo } from "react";
 import classNames from "classnames";
-import { Tooltip } from "react-tippy";
+import Tippy from "@tippyjs/react";
 import lodash from 'lodash'
 
 import Node from "@/inode";
@@ -60,9 +60,9 @@ export function WorkersTab({
               {
                 !node[nodeProps.WORKERS_PLANNED] && !node[nodeProps.WORKERS] && (!plan.isVerbose || !plan.isAnalyze) && (
                   <em className="text-warning">
-                    <Tooltip title={helpService.getHelpMessage('fuzzy needs verbose')}>
+                    <Tippy content={helpService.getHelpMessage('fuzzy needs verbose')}>
                       <i className="fa fa-exclamation-triangle cursor-help" />
-                    </Tooltip>
+                    </Tippy>
                   </em>
                 )
               }
@@ -82,9 +82,9 @@ export function WorkersTab({
           <div className="text-muted">
             <em>
               Detailed information is not available.
-              <Tooltip title={helpService.getHelpMessage('workers detailed info missing')}>
+              <Tippy content={helpService.getHelpMessage('workers detailed info missing')}>
                 <i className="fa fa-info-circle cursor-help" />
-              </Tooltip>
+              </Tippy>
             </em>
           </div>
         )

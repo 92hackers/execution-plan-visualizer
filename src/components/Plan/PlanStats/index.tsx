@@ -3,7 +3,7 @@
  */
 
 import React  from 'react'
-import { Tooltip } from 'react-tippy'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 
 import { IViewOptions, IViewOptionsAnyOne, IPlanStats } from '@/iplan'
@@ -59,9 +59,9 @@ export function PlanStats({
             ) : (
               <span className="text-muted">
                 N/A
-                <Tooltip title={getHelpMessage('missing execution time')}>
+                <Tippy content={getHelpMessage('missing execution time')}>
                   <i className="fa fa-info-circle cursor-help"></i>
-                </Tooltip>
+                </Tippy>
               </span>
             )
           }
@@ -81,9 +81,9 @@ export function PlanStats({
             ) : (
               <span className="text-muted">
                 N/A
-                <Tooltip title={getHelpMessage('missing planning time')}>
+                <Tippy content={getHelpMessage('missing planning time')}>
                   <i className="fa fa-info-circle cursor-help"></i>
-                </Tooltip>
+                </Tippy>
               </span>
             )
           }

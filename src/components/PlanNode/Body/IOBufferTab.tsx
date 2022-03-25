@@ -4,7 +4,7 @@
 
 import React from "react";
 import classNames from "classnames";
-import { Tooltip } from "react-tippy";
+import Tippy from "@tippyjs/react";
 
 import { PlanNodeCardTab } from "@/enums";
 import Node from "@/inode";
@@ -85,9 +85,11 @@ export function IOBufferTab({
         node[nodeProps.WAL_RECORDS] > 0 || node[nodeProps.WAL_BYTES] > 0 && (
           <div className="mb-2">
             <b>
-              <Tooltip title="Write-Ahead Logging">
-                <span className="more-info">WAL</span>:
-              </Tooltip>
+              <Tippy content="Write-Ahead Logging">
+                <span>
+                  <span className="more-info">WAL</span>:
+                </span>
+              </Tippy>
             </b>
             {formattedProp('WAL_RECORDS')} records
             <small>({formattedProp('WAL_BYTES')})</small>
@@ -95,9 +97,9 @@ export function IOBufferTab({
               node[nodeProps.WAL_FPI] && (
                 <span>
                   <span>-</span>
-                  <Tooltip title="WAL Full Page Images">
+                  <Tippy content="WAL Full Page Images">
                     <span className="more-info">FPI</span>
-                  </Tooltip>
+                  </Tippy>
                   <span>:</span>
                   {formattedProp('WAL_FPI')}
                 </span>
