@@ -1,3 +1,7 @@
+/**
+ * Color Service
+ */
+
 export class ColorService {
   /**
    * http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
@@ -13,14 +17,11 @@ export class ColorService {
    * @return  Array           The RGB representation
    */
   public hslToRgb(h: number, s: number, l: number) {
-    let r;
-    let g;
-    let b;
+    let r, g, b;
 
     if (s === 0) {
       r = g = b = l; // achromatic
     } else {
-
       const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
       const p = 2 * l - q;
       r = this.hue2rgb(p, q, h + 1 / 3);

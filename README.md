@@ -1,6 +1,6 @@
 # An execution plan visualizer for relational databases
 
-This project was based on the awesome project: [pev2](https://github.com/dalibo/pev2).
+The project was based on the awesome project: [pev2](https://github.com/dalibo/pev2).
 
 Compared to pev2, the project has below additional features:
 

@@ -1,3 +1,7 @@
+/**
+ * Predefined enums.
+ */
+
 export enum Metric {
   time,
   rows,
@@ -20,10 +24,10 @@ export enum BufferType {
 }
 
 export class HighlightType {
-    public static NONE: string = 'none';
-    public static DURATION: string = 'duration';
-    public static ROWS: string = 'rows';
-    public static COST: string = 'cost';
+  public static NONE: string = 'none';
+  public static DURATION: string = 'duration';
+  public static ROWS: string = 'rows';
+  public static COST: string = 'cost';
 }
 
 export enum EstimateDirection {
@@ -33,14 +37,22 @@ export enum EstimateDirection {
 }
 
 export class ViewMode {
-    public static FULL: string = 'full';
-    public static COMPACT: string = 'compact';
-    public static DOT: string = 'dot';
+  public static FULL: string = 'full';
+  public static COMPACT: string = 'compact';
+  public static DOT: string = 'dot';
 }
 
 export class Orientation {
   public static TWOD: string = 'twod';
   public static CLASSIC: string = 'classic';
+}
+
+export class PlanNodeCardTab {
+  public static GENERAL: string = 'general';
+  public static IOBuffer: string = 'iobuffer';
+  public static OUTPUT: string = 'output';
+  public static WORKERS: string = 'workers';
+  public static MISC: string = 'misc';
 }
 
 export enum CenterMode {
@@ -55,31 +67,11 @@ export enum HighlightMode {
   showdetails = 4,
 }
 
-// TODO: Node ID --> Node Id, keep all keys written style the same.
-export enum TiDBNodeProp {
-  // plan property keys
-  NODE_TYPE = 'Node ID',
-  ACTUAL_ROWS = 'Actual Rows',
-  PLAN_ROWS = 'Estimated Rows',
-  TASK = 'task',
-  ACCESS_OBJECT = 'access object',
-  OPERATOR_INFO = 'operator info',
-  EXECUTION_INFO = 'execution info',
-  DISK = 'disk',
-  MEMORY = 'memory',
-  PLANS = 'Plans',
-}
-
 export enum NodeProp {
   // plan property keys
-  NODE_TYPE = 'Node ID',
+  NODE_TYPE = 'Node Type',
   ACTUAL_ROWS = 'Actual Rows',
-  PLAN_ROWS = 'Estimated Rows',
-
-  DISK = 'disk',
-  MEMORY = 'memory',
-  TASK = 'task',
-
+  PLAN_ROWS = 'Plan Rows',
   PLAN_WIDTH = 'Plan Width',
   ROWS_REMOVED_BY_FILTER = 'Rows Removed by Filter',
   ROWS_REMOVED_BY_JOIN_FILTER = 'Rows Removed by Join Filter',
@@ -127,7 +119,7 @@ export enum NodeProp {
   PRE_SORTED_GROUPS = 'Pre-sorted Groups',
   PRESORTED_KEY = 'Presorted Key',
 
-  // computed by pev
+  // Computed Properties.
   NODE_ID = 'nodeId',
   EXCLUSIVE_DURATION = '*Duration (exclusive)',
   EXCLUSIVE_COST = '*Cost (exclusive)',
@@ -161,8 +153,68 @@ export enum NodeProp {
 
   ARRAY_INDEX_KEY = 'arrayIndex',
 
-  PEV_PLAN_TAG = 'plan_',
+  PLAN_TAG = 'plan_',
 }
+
+// Returns the list of properties that have already been displayed either in
+// the main panel or in other detailed tabs.
+export const NotMiscProperties: string[] = [
+  NodeProp.NODE_TYPE,
+  NodeProp.CTE_NAME,
+  NodeProp.EXCLUSIVE_DURATION,
+  NodeProp.EXCLUSIVE_COST,
+  NodeProp.TOTAL_COST,
+  NodeProp.PLAN_ROWS,
+  NodeProp.ACTUAL_ROWS,
+  NodeProp.ACTUAL_LOOPS,
+  NodeProp.OUTPUT,
+  NodeProp.WORKERS,
+  NodeProp.WORKERS_PLANNED,
+  NodeProp.WORKERS_LAUNCHED,
+  NodeProp.EXCLUSIVE_SHARED_HIT_BLOCKS,
+  NodeProp.EXCLUSIVE_SHARED_READ_BLOCKS,
+  NodeProp.EXCLUSIVE_SHARED_DIRTIED_BLOCKS,
+  NodeProp.EXCLUSIVE_SHARED_WRITTEN_BLOCKS,
+  NodeProp.EXCLUSIVE_TEMP_READ_BLOCKS,
+  NodeProp.EXCLUSIVE_TEMP_WRITTEN_BLOCKS,
+  NodeProp.EXCLUSIVE_LOCAL_HIT_BLOCKS,
+  NodeProp.EXCLUSIVE_LOCAL_READ_BLOCKS,
+  NodeProp.EXCLUSIVE_LOCAL_DIRTIED_BLOCKS,
+  NodeProp.EXCLUSIVE_LOCAL_WRITTEN_BLOCKS,
+  NodeProp.SHARED_HIT_BLOCKS,
+  NodeProp.SHARED_READ_BLOCKS,
+  NodeProp.SHARED_DIRTIED_BLOCKS,
+  NodeProp.SHARED_WRITTEN_BLOCKS,
+  NodeProp.TEMP_READ_BLOCKS,
+  NodeProp.TEMP_WRITTEN_BLOCKS,
+  NodeProp.LOCAL_HIT_BLOCKS,
+  NodeProp.LOCAL_READ_BLOCKS,
+  NodeProp.LOCAL_DIRTIED_BLOCKS,
+  NodeProp.LOCAL_WRITTEN_BLOCKS,
+  NodeProp.PLANNER_ESTIMATE_FACTOR,
+  NodeProp.PLANNER_ESTIMATE_DIRECTION,
+  NodeProp.SUBPLAN_NAME,
+  NodeProp.GROUP_KEY,
+  NodeProp.HASH_CONDITION,
+  NodeProp.JOIN_TYPE,
+  NodeProp.INDEX_NAME,
+  NodeProp.HASH_CONDITION,
+  NodeProp.EXCLUSIVE_IO_READ_TIME,
+  NodeProp.EXCLUSIVE_IO_WRITE_TIME,
+  NodeProp.IO_READ_TIME, // Exclusive value already shown in IO tab
+  NodeProp.IO_WRITE_TIME, // Exclusive value already shown in IO tab
+  NodeProp.HEAP_FETCHES,
+  NodeProp.WAL_RECORDS,
+  NodeProp.WAL_BYTES,
+  NodeProp.WAL_FPI,
+  NodeProp.NODE_ID,
+  NodeProp.ROWS_REMOVED_BY_FILTER,
+  NodeProp.ROWS_REMOVED_BY_JOIN_FILTER,
+  NodeProp.ACTUAL_ROWS_REVISED,
+  NodeProp.PLAN_ROWS_REVISED,
+  NodeProp.ROWS_REMOVED_BY_FILTER_REVISED,
+  NodeProp.ROWS_REMOVED_BY_JOIN_FILTER_REVISED,
+];
 
 export enum PropType {
   blocks,

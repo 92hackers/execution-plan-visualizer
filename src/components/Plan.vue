@@ -1,6 +1,7 @@
 <template>
   <div class="plan-container d-flex flex-column overflow-hidden flex-grow-1 bg-light">
     <div>
+      <!-- Global top header navbar -->
       <ul class="nav nav-pills">
         <li class="nav-item p-1">
           <a class="nav-link px-2 py-0" :class="{'active' : activeTab === 'plan' }" href="#plan">Plan</a>
@@ -22,6 +23,7 @@
       <div v-if="validationMessage" class="flex-grow-1 d-flex justify-content-center">
         <div class="alert alert-danger align-self-center">{{validationMessage}}</div>
       </div>
+
       <div class="tab-pane flex-grow-1 overflow-hidden" :class="{'show active d-flex': activeTab === 'plan' }" v-if="!validationMessage">
         <!-- Plan tab -->
         <div class="d-flex flex-column flex-grow-1 overflow-hidden"
@@ -122,35 +124,50 @@
               <i class="fa fa-cog p-0"></i> Settings
             </button>
           </div>
+
           <div class="flex-grow-1 d-flex overflow-hidden">
             <div class="flex-grow-1 overflow-hidden">
               <splitpanes class="default-theme" @resize="viewOptions.diagramWidth = $event[0].size">
+
+                <!-- Diagram pane of Plan tab -->
                 <pane
-                      :size="viewOptions.diagramWidth"
-                      class="d-flex"
-                      v-if="viewOptions.showDiagram"
-                      >
-                      <diagram
-                        ref="diagram"
-                        :plan="plan"
-                        :eventBus="eventBus"
-                        class="d-flex flex-column flex-grow-1 overflow-hidden plan-diagram"
-                        >
-                        <template v-slot:nodeindex="{ node }">
-                          <slot name="nodeindex" v-bind:node="node"></slot>
-                        </template>
-                      </diagram>
+                  :size="viewOptions.diagramWidth"
+                  class="d-flex"
+                  v-if="viewOptions.showDiagram"
+                >
+                  <diagram
+                    ref="diagram"
+                    :plan="plan"
+                    :eventBus="eventBus"
+                    class="d-flex flex-column flex-grow-1 overflow-hidden plan-diagram"
+                    >
+                    <template v-slot:nodeindex="{ node }">
+                      <slot name="nodeindex" v-bind:node="node"></slot>
+                    </template>
+                  </diagram>
                 </pane>
-                <pane ref="plan" class="plan d-flex flex-column flex-grow-1 grab-bing overflow-auto">
+
+                <pane ref="plan" class="">
+                  <!-- Main Plan -->
                   <ul class="main-plan p-2 mb-0">
                     <li>
-                      <plan-node :node="rootNode" :plan="plan" :viewOptions="viewOptions" :eventBus="eventBus" ref="root">
+                      <plan-node
+                        :node="rootNode"
+                        :plan="plan"
+                        :viewOptions="viewOptions"
+                        :eventBus="eventBus"
+                        :onMouseOverNode="onMouseOverNode"
+                        :onMouseOutNode="onMouseOutNode"
+                        ref="root"
+                      >
                         <template v-slot:nodeindex="{ node }">
                           <slot name="nodeindex" v-bind:node="node"></slot>
                         </template>
                       </plan-node>
                     </li>
                   </ul>
+
+                  <!-- CTE plans -->
                   <ul class="init-plans p-2 mb-0" v-if="plan.ctes.length">
                     <li v-for="node in plan.ctes">
                       <plan-node :node="node" :plan="plan" :viewOptions="viewOptions" :eventBus="eventBus" ref="root">
@@ -161,8 +178,12 @@
                     </li>
                   </ul>
                 </pane>
+
               </splitpanes>
+
             </div>
+
+            <!-- Plan pane menu to select. -->
             <div class="small p-2 border-left" v-if="plan && !viewOptions.menuHidden">
               <div class="text-right clearfix">
                 <button type="button" class="close" aria-label="Close" @click="viewOptions.menuHidden = true">
@@ -200,17 +221,38 @@
               <label class="text-uppercase">Graph metric</label>
               <div class="form-group">
                 <div class="btn-group btn-group-sm">
-                  <button class="btn btn-outline-secondary" :class="{'active': viewOptions.highlightType === highlightTypes.NONE}" v-on:click="viewOptions.highlightType = highlightTypes.NONE">none</button>
-                  <button class="btn btn-outline-secondary" :class="{'active': viewOptions.highlightType === highlightTypes.DURATION}" v-on:click="viewOptions.highlightType = highlightTypes.DURATION" :disabled="!plan.isAnalyze">duration</button>
-                  <button class="btn btn-outline-secondary" :class="{'active': viewOptions.highlightType === highlightTypes.ROWS}" v-on:click="viewOptions.highlightType = highlightTypes.ROWS" :disabled="rootNode[nodeProps.ACTUAL_ROWS] === undefined">rows</button>
-                  <button class="btn btn-outline-secondary" :class="{'active': viewOptions.highlightType === highlightTypes.COST}" v-on:click="viewOptions.highlightType = highlightTypes.COST">cost</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    :class="{'active': viewOptions.highlightType === highlightTypes.NONE}"
+                    v-on:click="viewOptions.highlightType = highlightTypes.NONE"
+                  >none</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    :class="{'active': viewOptions.highlightType === highlightTypes.DURATION}"
+                    v-on:click="viewOptions.highlightType = highlightTypes.DURATION"
+                    :disabled="!plan.isAnalyze"
+                  >duration</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    :class="{'active': viewOptions.highlightType === highlightTypes.ROWS}"
+                    v-on:click="viewOptions.highlightType = highlightTypes.ROWS"
+                    :disabled="rootNode[nodeProps.ACTUAL_ROWS] === undefined"
+                  >rows</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    :class="{'active': viewOptions.highlightType === highlightTypes.COST}"
+                    v-on:click="viewOptions.highlightType = highlightTypes.COST"
+                  >cost</button>
                 </div>
               </div>
             </div>
           </div>
         <!-- end Plan tab -->
+
         </div>
       </div>
+
+      <!-- Raw global tab -->
       <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'raw' }">
         <div class="overflow-hidden d-flex w-100 h-100">
           <div class="overflow-auto flex-grow-1">
@@ -219,6 +261,8 @@
           <copy :content="planSource" />
         </div>
       </div>
+
+      <!-- Show SQL Query global tab -->
       <div class="tab-pane flex-grow-1 overflow-hidden position-relative" :class="{'show active': activeTab === 'query' }" v-if="queryText">
         <div class="overflow-hidden d-flex w-100 h-100">
           <div class="overflow-auto flex-grow-1">
@@ -227,6 +271,8 @@
         </div>
         <copy :content="queryText" />
       </div>
+
+      <!-- Stats global tab -->
       <div class="tab-pane flex-grow-1 overflow-auto" :class="{'show active': activeTab === 'stats' }">
         <stats
           :plan="plan"
@@ -243,20 +289,16 @@ import tippy from 'tippy.js';
 import { Splitpanes, Pane } from 'splitpanes';
 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-
-// Sub components.
 import PlanNode from '@/components/PlanNode.vue';
-import Copy from '@/components/Copy.vue';
-import Diagram from '@/components/Diagram.vue';
-import Stats from '@/components/Stats.vue';
-
-// Services.
+// import Copy from '@/components/Copy.vue';
+// import Diagram from '@/components/Diagram.vue';
+// import Stats from '@/components/Stats.vue';
 import { HelpService, scrollChildIntoParentView } from '@/services/help-service';
 import { PlanService } from '@/services/plan-service';
-
 import { cost, duration, durationClass, json, pgsql, rows } from '@/filters';
-import { CenterMode, HighlightMode, HighlightType, NodeProp, Orientation, ViewMode } from '@/enums';
-import { IPlan } from '@/iplan';
+import { CenterMode, HighlightMode, HighlightType, NodeProp, Orientation, ViewMode } from '../enums';
+import { IPlan } from '../iplan';
+import Node from '../inode';
 
 import Dragscroll from '@/dragscroll';
 
@@ -267,12 +309,12 @@ Vue.component('tippy', TippyComponent);
 @Component({
   name: 'plan',
   components: {
-    Copy,
-    Diagram,
+    // Copy,
+    // Diagram,
     Pane,
     PlanNode,
     Splitpanes,
-    Stats,
+    // Stats,
   },
   directives: {
   },
@@ -285,17 +327,17 @@ Vue.component('tippy', TippyComponent);
     rows,
   },
 })
+
 export default class Plan extends Vue {
   public $refs!: {
     plan: InstanceType<typeof Pane>,
     root: PlanNode,
-    diagram: InstanceType<typeof Diagram>,
+    // diagram: InstanceType<typeof Diagram>,
   };
 
   @Prop(String) private planSource!: string;
   @Prop(String) private planQuery!: string;
   @Prop(Number) private zoomTo!: number;
-
   private queryText!: string;
   private plan!: IPlan | null;
   private rootNode!: any;
@@ -340,8 +382,6 @@ export default class Plan extends Vue {
 
   private mounted(): void {
     this.handleScroll();
-    this.eventBus.$on('mouseovernode', this.onMouseOverNode);
-    this.eventBus.$on('mouseoutnode', this.onMouseOutNode);
     this.eventBus.$on('clickcte', this.centerCTE);
   }
 
@@ -428,10 +468,6 @@ export default class Plan extends Vue {
 
   private showHideMenu(): void {
     this.viewOptions.menuHidden = !this.viewOptions.menuHidden;
-  }
-
-  private getHelpMessage(message: string) {
-    return this.helpService.getHelpMessage(message);
   }
 
   private centerNode(nodeId: number, centerMode: CenterMode, highlightMode: HighlightMode) {
@@ -566,7 +602,7 @@ export default class Plan extends Vue {
     if (cmp) {
       cmp.selected = true;
     }
-    this.$refs.diagram.selected = newVal;
+    // this.$refs.diagram.selected = newVal;
 
     cmp = this.findPlanNode((o: PlanNode) => o.node.nodeId === oldVal);
     if (cmp) {
@@ -582,5 +618,5 @@ export default class Plan extends Vue {
 @import '~highlight.js/styles/github.css';
 
 @import '../assets/scss/variables';
-@import '../assets/scss/pev2';
+@import '../assets/scss/global';
 </style>

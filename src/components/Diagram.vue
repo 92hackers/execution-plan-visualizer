@@ -1,6 +1,9 @@
 <template>
   <div class="diagram">
+    <!-- Header -->
     <div class="flex-shrink-0">
+
+      <!-- MetricsBtns -->
       <div class="form-group text-center my-1">
         <div class="btn-group btn-group-xs">
           <button class="btn btn-outline-secondary" :class="{'active': viewOptions.metric === metrics.time}" v-on:click="viewOptions.metric = metrics.time">time</button>
@@ -10,6 +13,10 @@
           <button class="btn btn-outline-secondary" :class="{'active': viewOptions.metric === metrics.buffers}" v-on:click="viewOptions.metric = metrics.buffers">buffers</button>
         </div>
       </div>
+      <!-- MetricsBtns -->
+
+
+      <!-- BufferLocation -->
       <div class="form-group text-center my-1" v-if="viewOptions.metric == metrics.buffers">
         <div class="btn-group btn-group-xs">
           <button class="btn btn-outline-secondary" :class="{'active': viewOptions.buffersMetric === bufferLocations.shared}" v-on:click="viewOptions.buffersMetric = bufferLocations.shared"
@@ -28,6 +35,9 @@
           </button>
         </div>
       </div>
+      <!-- BufferLocation -->
+
+      <!-- BufferType -->
       <div class="legend text-center">
         <ul class="list-unstyled list-inline mb-0" v-if="viewOptions.metric == metrics.buffers">
           <li class="list-inline-item" v-if="viewOptions.buffersMetric != bufferLocations.temp">
@@ -48,7 +58,12 @@
           </li>
         </ul>
       </div>
+      <!-- BufferType -->
+
     </div>
+    <!-- Header -->
+
+    <!-- Table -->
     <div class="overflow-auto flex-grow-1" ref="container">
       <table class="m-1" v-if="dataAvailable">
         <tbody v-for="flat, index in plans">
@@ -58,7 +73,7 @@
             </th>
           </tr>
           <template v-for="row, index in flat">
-            <tr v-if="row[1][nodeProps.SUBPLAN_NAME]">
+            <tr v-if="row[1][nodeProps.SUBPLAN_NAME]" v-bind:key="index">
               <td v-if="!isCTE(row[1])"></td>
               <td
                 class="subplan pr-2"
@@ -67,8 +82,12 @@
                 >
                 <span class="tree-lines">
                   <template v-for="i in lodash.range(row[0])">
-                    <template v-if="lodash.indexOf(row[3], i) != -1">│</template><template v-else-if="i !== 0">&nbsp;</template>
-                  </template><template v-if="index !== 0">{{ row[2] ? '└' : '├' }}</template>
+                    <template v-if="lodash.indexOf(row[3], i) != -1">
+                      │
+                    </template>
+                    <template v-else-if="i !== 0">&nbsp;</template>
+                  </template>
+                  <template v-if="index !== 0">{{ row[2] ? '└' : '├' }}</template>
                 </span>
                 <a class="font-italic text-reset"
                   href
@@ -80,23 +99,28 @@
             </tr>
             <tr
               class="no-focus-outline node"
+              v-bind:key="index"
               :class="{'selected': row[1].nodeId === selected, 'highlight': row[1].nodeId === highlightedNode}"
               :data-tippy-content="getTooltipContent(row[1])"
               @mouseenter="eventBus.$emit('mouseovernode', row[1].nodeId)"
               @mouseleave="eventBus.$emit('mouseoutnode', row[1].nodeId)"
               :ref="'node_' + row[1].nodeId"
-              >
-
+            >
               <td class="node-index">
                 <a class="font-weight-normal small" :href="'#plan/node/' + row[1].nodeId" @click>#{{row[1].nodeId}}</a>
               </td>
               <td class="node-type pr-2">
                 <span class="tree-lines">
                   <template v-for="i in lodash.range(row[0])">
-                    <template v-if="lodash.indexOf(row[3], i) != -1">│</template><template v-else-if="i !== 0">&nbsp;</template>
-                  </template><template v-if="index !== 0">
-                    <template v-if="!row[1][nodeProps.SUBPLAN_NAME]">{{ row[2] ? '└' : '├' }}</template><template v-else>
-                      <template v-if="!row[2]">│</template><template v-else>&nbsp;</template>
+                    <template v-if="lodash.indexOf(row[3], i) != -1">│</template>
+                    <template v-else-if="i !== 0">&nbsp;</template>
+                  </template>
+
+                  <template v-if="index !== 0">
+                    <template v-if="!row[1][nodeProps.SUBPLAN_NAME]">{{ row[2] ? '└' : '├' }}</template>
+                    <template v-else>
+                      <template v-if="!row[2]">│</template>
+                      <template v-else>&nbsp;</template>
                     </template>
                   </template>
                 </span>
@@ -104,14 +128,37 @@
               </td>
               <td>
                 <!-- time -->
-                <div class="progress rounded-0 align-items-center bg-transparent" style="height: 5px;" v-if="viewOptions.metric == metrics.time" :key="'node' + index + 'time'">
-                  <div class="progress-bar border-secondary bg-secondary" :class="{'border-left': row[1][nodeProps.EXCLUSIVE_DURATION] > 0}" role="progressbar" :style="'width: ' + row[1][nodeProps.EXCLUSIVE_DURATION] / (plan.planStats.executionTime || plan.content.Plan[nodeProps.ACTUAL_TOTAL_TIME]) * 100 + '%; height:5px;'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                  <div class="progress-bar bg-secondary-light" role="progressbar" :style="'width: ' + (row[1][nodeProps.ACTUAL_TOTAL_TIME] - row[1][nodeProps.EXCLUSIVE_DURATION]) / (plan.planStats.executionTime || plan.content.Plan[nodeProps.ACTUAL_TOTAL_TIME]) * 100 + '%; height:5px;'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                <div
+                  class="progress rounded-0 align-items-center bg-transparent"
+                  style="height: 5px;"
+                  v-if="viewOptions.metric == metrics.time"
+                  :key="'node' + index + 'time'"
+                >
+                  <div
+                    class="progress-bar border-secondary bg-secondary"
+                    :class="{'border-left': row[1][nodeProps.EXCLUSIVE_DURATION] > 0}"
+                    role="progressbar"
+                    :style="'width: ' + row[1][nodeProps.EXCLUSIVE_DURATION] / (plan.planStats.executionTime || plan.content.Plan[nodeProps.ACTUAL_TOTAL_TIME]) * 100 + '%; height:5px;'"
+                    aria-valuenow="15"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                  </div>
+                  <div
+                    class="progress-bar bg-secondary-light"
+                    role="progressbar"
+                    :style="'width: ' + (row[1][nodeProps.ACTUAL_TOTAL_TIME] - row[1][nodeProps.EXCLUSIVE_DURATION]) / (plan.planStats.executionTime || plan.content.Plan[nodeProps.ACTUAL_TOTAL_TIME]) * 100 + '%; height:5px;'"
+                    aria-valuenow="15"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
                 </div>
+
                 <!-- rows -->
                 <div class="progress rounded-0 align-items-center bg-transparent" style="height: 5px;" v-else-if="viewOptions.metric == metrics.rows" :key="'node' + index + 'rows'">
                   <div class="bg-secondary" role="progressbar" :style="'width: ' + Math.round(row[1][nodeProps.ACTUAL_ROWS_REVISED] / plan.planStats.maxRows * 100) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                 </div>
+
                 <!-- estimation -->
                 <div class="progress rounded-0 align-items-center bg-transparent justify-content-center" style="height: 10px;" v-else-if="viewOptions.metric == metrics.estimate_factor" :key="'node' + index + 'estimation'">
                   <span class="text-muted small">
@@ -124,10 +171,12 @@
                     <i class="fa fa-fw" :class="{'fa-arrow-up': row[1][nodeProps.PLANNER_ESTIMATE_DIRECTION] === estimateDirections.over}"></i>
                   </span>
                 </div>
+
                 <!-- cost -->
                 <div class="progress rounded-0 align-items-center bg-transparent" style="height: 5px;" v-else-if="viewOptions.metric == metrics.cost" :key="'node' + index + 'cost'">
                   <div class="bg-secondary" role="progressbar" :style="'width: ' + Math.round(row[1][nodeProps.EXCLUSIVE_COST] / plan.planStats.maxCost * 100) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                 </div>
+
                 <!-- buffers shared -->
                 <div class="progress rounded-0 align-items-center bg-transparent" style="height: 5px;" v-else-if="viewOptions.metric == metrics.buffers && viewOptions.buffersMetric == bufferLocations.shared && plan.planStats.maxBlocks[bufferLocations.shared]" :key="'node' + index + 'buffers_shared'">
                   <div class="bg-hit" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_SHARED_HIT_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.shared] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
@@ -135,6 +184,7 @@
                   <div class="bg-dirtied" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_SHARED_DIRTIED_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.shared] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                   <div class="bg-written" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_SHARED_WRITTEN_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.shared] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                 </div>
+
                 <!-- buffers temp -->
                 <div class="progress rounded-0 align-items-center bg-transparent" style="height: 5px;" v-else-if="viewOptions.metric == metrics.buffers && viewOptions.buffersMetric == bufferLocations.temp && plan.planStats.maxBlocks[bufferLocations.temp]" :key="'node' + index + 'buffers_temp'">
                   <div class="bg-read" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_TEMP_READ_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.temp] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
@@ -147,6 +197,7 @@
                   <div class="bg-dirtied" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_LOCAL_DIRTIED_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.local] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                   <div class="bg-written" role="progressbar" :style="'width: ' + (Math.round(row[1][nodeProps.EXCLUSIVE_LOCAL_WRITTEN_BLOCKS] / plan.planStats.maxBlocks[bufferLocations.local] * 100) || 0) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="height: 5px;"></div>
                 </div>
+
               </td>
             </tr>
           </template>
@@ -340,6 +391,7 @@ export default class Diagram extends Vue {
         written = node[NodeProp.EXCLUSIVE_LOCAL_WRITTEN_BLOCKS];
         break;
     }
+
     text += '<table class="table text-white table-sm table-borderless mb-0">';
     text += hit ? '<tr><td>Hit:</td><td class="text-right">' + blocks(hit) + '</td></tr>' : '';
     text += read ? '<tr><td>Read:</td><td class="text-right">' + blocks(read) + '</td></tr>' : '';

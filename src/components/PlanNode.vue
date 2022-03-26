@@ -1,34 +1,48 @@
 <template>
-  <div :class="{'subplan': node[nodeProps.SUBPLAN_NAME], 'd-flex flex-column align-items-center': viewOptions.orientation == orientations.TWOD}">
+  <div :class="wrapperClassNames">
     <h4 v-if="node[nodeProps.SUBPLAN_NAME]">{{ node[nodeProps.SUBPLAN_NAME] }}</h4>
-    <div :class="['text-left plan-node', {'detailed': showDetails, 'never-executed': isNeverExecuted, 'parallel': workersPlannedCount, 'selected': selected}]">
-      <div class="workers text-muted py-0 px-1" v-if="workersPlannedCount">
-        <div v-for="index in workersPlannedCountReversed" :style="'top: ' + (1 + index * 2)  + 'px; left: ' + (1 + (index + 1) * 3) + 'px;'"
-             :class="{'border-dashed': index >= workersLaunchedCount}">
+    <div :class="planNodeClassName">
+      <div v-if="workersPlannedCount" class="workers text-muted py-0 px-1">
+        <div
+          v-for="index in workersPlannedCountReversed"
+          v-bind:key="index"
+          :style="`top: ${1 + index * 2}px; left: ${1 + (index + 1) * 3}px`"
+          :class="workersCountClassName(index)"
+        >
           {{ index }}
         </div>
       </div>
       <div class="collapse-handle" v-if="hasChildren">
-        <i :class="['fa fa-fw', {'fa-compress': !collapsed, 'fa-expand': collapsed}]" v-on:click.stop="toggleCollapsed()" title="Collpase or expand child nodes"></i>
+        <i
+          :class="collapseIconClassName"
+          v-on:click.stop="toggleCollapsed()"
+          title="Collpase or expand child nodes"
+        ></i>
       </div>
-      <div class="plan-node-body card"
-           @mouseenter="eventBus.$emit('mouseovernode', node.nodeId)"
-           @mouseleave="eventBus.$emit('mouseoutnode', node.nodeId)"
+      <div
+        class="plan-node-body card"
+        @mouseenter="onMouseOverNode(node.nodeId)"
+        @mouseleave="onMouseOutNode(node.nodeId)"
       >
-        <div class="card-body header no-focus-outline"
-            v-on:click.stop="showDetails = !showDetails"
-        >
+        <div class="card-body header no-focus-outline" v-on:click.stop="showDetails = !showDetails">
+          <!-- #xxx Alert Tooltip for bad node -->
           <header class="mb-0">
             <h4 class="text-body">
-              <a class="font-weight-normal small" :href="'#plan/node/' + node.nodeId" @click.stop>#{{node.nodeId}}</a>
+              <a
+                class="font-weight-normal small"
+                :href="`#plan/node/${node.nodeId}`"
+                @click.stop
+              >
+                #{{node.nodeId}}
+              </a>
               {{ getNodeName() }}
             </h4>
             <div class="float-right">
-              <span v-if="durationClass" :class="'p-0  d-inline-block mb-0 ml-1 text-nowrap alert ' + durationClass" content="Slow" v-tippy><i class="fa fa-fw fa-clock"></i></span>
-              <span v-if="costClass" :class="'p-0  d-inline-block mb-0 ml-1 text-nowrap alert ' + costClass" content="Cost is high" v-tippy><i class="fa fa-fw fa-dollar-sign"></i></span>
-              <span v-if="estimationClass" :class="'p-0  d-inline-block mb-0 ml-1 text-nowrap alert ' + estimationClass" content="Bad estimation for number of rows" v-tippy><i class="fa fa-fw fa-thumbs-down"></i></span>
-              <span v-if="rowsRemovedClass" :class="'p-0  d-inline-block mb-0 ml-1 text-nowrap alert ' + rowsRemovedClass" :content="filterTooltip" v-tippy><i class="fa fa-fw fa-filter"></i></span>
-              <span v-if="heapFetchesClass" :class="'p-0  d-inline-block mb-0 ml-1 text-nowrap alert ' + heapFetchesClass" content="Heap Fetches number is high" v-tippy="{arrow: true}"><i class="fa fa-fw fa-exchange-alt"></i></span>
+              <span v-if="durationClass" :class="tipIconClassName(durationClass)" content="Slow" v-tippy><i class="fa fa-fw fa-clock"></i></span>
+              <span v-if="costClass" :class="tipIconClassName(costClass)" content="Cost is high" v-tippy><i class="fa fa-fw fa-dollar-sign"></i></span>
+              <span v-if="estimationClass" :class="tipIconClassName(estimationClass)" content="Bad estimation for number of rows" v-tippy><i class="fa fa-fw fa-thumbs-down"></i></span>
+              <span v-if="rowsRemovedClass" :class="tipIconClassName(rowsRemovedClass)" :content="filterTooltip" v-tippy><i class="fa fa-fw fa-filter"></i></span>
+              <span v-if="heapFetchesClass" :class="tipIconClassName(heapFetchesClass)" content="Heap Fetches number is high" v-tippy="{arrow: true}"><i class="fa fa-fw fa-exchange-alt"></i></span>
               <span v-if="rowsRemoved && !rowsRemovedClass" class="p-0  d-inline-block mb-0 ml-1 text-nowrap" :content="filterTooltip" v-tippy><i class="fa fa-fw fa-filter text-muted"></i></span>
             </div>
             <span v-if="viewOptions.viewMode === viewModes.FULL">
@@ -38,42 +52,55 @@
             </span>
           </header>
 
+          <!-- collapsed card detail description -->
           <div v-if="viewOptions.viewMode === viewModes.FULL" class="text-left text-monospace">
             <div v-if="node[nodeProps.RELATION_NAME]" :class="{'line-clamp-2': !showDetails}">
-              <span class="text-muted">on&nbsp;</span><span v-if="node[nodeProps.SCHEMA]">{{node[nodeProps.SCHEMA]}}.</span>{{node[nodeProps.RELATION_NAME]}}
+              <span class="text-muted">on&nbsp;</span>
+              <span v-if="node[nodeProps.SCHEMA]">{{node[nodeProps.SCHEMA]}}.</span>
+              {{node[nodeProps.RELATION_NAME]}}
               <span v-if="node[nodeProps.ALIAS]">
                 <span class="text-muted">as</span>
                 {{node[nodeProps.ALIAS]}}
               </span>
             </div>
             <div v-if="node[nodeProps.GROUP_KEY]" :class="{'line-clamp-2': !showDetails}">
-              <span class="text-muted">by</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.GROUP_KEY])"></span></div>
+              <span class="text-muted">by</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.GROUP_KEY])"></span>
+            </div>
+
             <div v-if="node[nodeProps.SORT_KEY]" :class="{'line-clamp-2': !showDetails}">
               <span class="text-muted">by</span> <span v-html="$options.filters.sortKeys(node[nodeProps.SORT_KEY], node[nodeProps.PRESORTED_KEY])"></span>
             </div>
+
             <div v-if="node[nodeProps.JOIN_TYPE]">{{node[nodeProps.JOIN_TYPE] }}
-              <span class="text-muted">join</span></div>
+              <span class="text-muted">join</span>
+            </div>
+
             <div v-if="node[nodeProps.INDEX_NAME]" :class="{'line-clamp-2': !showDetails}">
               <span class="text-muted">using</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.INDEX_NAME])"></span>
             </div>
+
             <div v-if="node[nodeProps.HASH_CONDITION]" :class="{'line-clamp-2': !showDetails}">
-              <span class="text-muted">on</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.HASH_CONDITION])"></span></div>
+              <span class="text-muted">on</span>&nbsp;<span v-html="$options.filters.keysToString(node[nodeProps.HASH_CONDITION])"></span>
+            </div>
+
             <div v-if="node[nodeProps.CTE_NAME]">
               <a class="text-reset" href v-on:click.stop.prevent="eventBus.$emit('clickcte', 'CTE ' + node[nodeProps.CTE_NAME])">
                 <i class="fa fa-search text-muted"></i>&nbsp;<span class="text-muted">CTE</span> {{node[nodeProps.CTE_NAME]}}
               </a>
             </div>
+
           </div>
 
-          <div v-if="!allWorkersLaunched && viewOptions.viewMode === viewModes.FULL" class="text-c-3 cursor-help" :content="getHelpMessage('workers planned not launched')" v-tippy>
+          <div className="text-c-3 cursor-help" :content="getHelpMessage('')" v-tippy>
             <i class="fa fa-exclamation-triangle"></i>&nbsp;
             <span>Not all workers launched</span>
           </div>
           <div class="clearfix"></div>
 
+
           <div v-if="viewOptions.highlightType !== highlightTypes.NONE && highlightValue !== null">
             <div class="progress node-bar-container" style="height: 5px;">
-              <div class="progress-bar" role="progressbar" v-bind:style="{ width: barWidth + '%', 'background-color': getBarColor(barWidth)}" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="progress-bar" role="progressbar" :style="{ width: barWidth + '%', 'background-color': getBarColor(barWidth)}"></div>
             </div>
             <span class="node-bar-label" v-if="shouldShowNodeBarLabel()">
               <span class="text-muted">{{viewOptions.highlightType}}:</span>&nbsp;
@@ -83,35 +110,69 @@
 
         </div>
 
+        <!-- Uncollapsed Card Header. -->
         <div v-if="showDetails" class="card-header border-top">
+          <!-- Node Description -->
           <div v-if="getNodeTypeDescription()" class="node-description">
-            <span class="node-type">{{node[nodeProps.NODE_TYPE]}} Node</span>&nbsp;<span v-html="getNodeTypeDescription()"></span>
+            <span class="node-type">{{ node[nodeProps.NODE_TYPE] }} Node</span>
+            &nbsp;
+            <span v-html="getNodeTypeDescription()"></span>
           </div>
+          <!-- Node Description -->
           <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-              <a class="nav-link" :class="{'active' : activeTab === 'general' }" @click.prevent="setActiveTab('general')" href>General</a>
+              <a
+                class="nav-link"
+                :class="{'active': activeTab === 'general'}"
+                @click.prevent="setActiveTab('general')"
+                href
+              >General</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-nowrap" :class="{'active' : activeTab === 'iobuffer', 'disabled': !shouldShowIoBuffers }" @click.prevent="setActiveTab('iobuffer')" href>IO & Buffers</a>
+              <a
+                class="nav-link text-nowrap"
+                :class="{'active' : activeTab === 'iobuffer', 'disabled': !shouldShowIoBuffers }"
+                @click.prevent="setActiveTab('iobuffer')"
+                href
+              >IO & Buffers</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="{'active' : activeTab === 'output', 'disabled': !node[nodeProps.OUTPUT] }" @click.prevent="setActiveTab('output')" href>Output</a>
+              <a
+                class="nav-link"
+                :class="{'active' : activeTab === 'output', 'disabled': !node[nodeProps.OUTPUT] }"
+                @click.prevent="setActiveTab('output')"
+                href
+              >Output</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="{'active' : activeTab === 'workers', 'disabled': !(node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]) }" @click.prevent="setActiveTab('workers')" href>Workers</a>
+              <a
+                class="nav-link"
+                :class="{'active' : activeTab === 'workers', 'disabled': !(node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]) }"
+                @click.prevent="setActiveTab('workers')"
+                href
+              >Workers</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="{'active' : activeTab === 'misc' }" @click.prevent="setActiveTab('misc')" href>Misc</a>
+              <a
+                href
+                class="nav-link"
+                :class="{'active' : activeTab === 'misc' }"
+                @click.prevent="setActiveTab('misc')"
+              >Misc</a>
             </li>
           </ul>
         </div>
-        <div class="card-body tab-content" v-if="showDetails">
+        <!-- Uncollapsed Card Header. -->
+        
+        <!-- unCollapsed Card Body -->
+        <div v-if="showDetails" class="card-body tab-content">
           <div class="tab-pane" :class="{'show active': activeTab === 'general' }">
+
             <!-- general -->
             <div v-if="plan.isAnalyze">
-              <i class="fa fa-fw fa-clock text-muted"></i>
+              <i className="fa fa-fw fa-clock text-muted"></i>
               <b>Timing:</b>&nbsp;
-              <span :class="'p-0 px-1 rounded alert ' + durationClass" v-html="formattedProp('EXCLUSIVE_DURATION')"></span>
+              <span :class="`p-0 px-1 rounded alert ${durationClass}`" v-html="formattedProp('EXCLUSIVE_DURATION')"></span>
               <template v-if="executionTimePercent !== Infinity">
                 |
                 <strong>{{executionTimePercent}}</strong><span class="text-muted">%</span>
@@ -119,7 +180,11 @@
             </div>
             <div>
               <i class="fa fa-fw fa-align-justify text-muted"></i>
-              <b>Rows:</b> <span class="px-1">{{ tilde + formattedProp('ACTUAL_ROWS_REVISED') }}</span> <span class="text-muted" v-if="node[nodeProps.PLAN_ROWS]">(Planned: {{ tilde + formattedProp('PLAN_ROWS_REVISED') }})</span>
+              <b>Rows:</b>
+              <span class="px-1">{{ tilde + formattedProp('ACTUAL_ROWS_REVISED') }}</span>
+              <span class="text-muted" v-if="node[nodeProps.PLAN_ROWS]">
+                (Planned: {{ tilde + formattedProp('PLAN_ROWS_REVISED') }})
+              </span>
               <span v-if="plannerRowEstimateDirection !== estimateDirections.none && shouldShowPlannerEstimate">
                 |
                 <span v-if="plannerRowEstimateDirection === estimateDirections.over"><i class="fa fa-arrow-up"></i> over</span>
@@ -145,51 +210,31 @@
               <b>Heap Fetches:</b>&nbsp;
               <span :class="'p-0 px-1 rounded alert ' + heapFetchesClass" v-html="formattedProp('HEAP_FETCHES')"></span>
               &nbsp;
-              <i class="fa fa-fw fa-info-circle text-muted" v-if="heapFetchesClass"
+              <i
+                class="fa fa-fw fa-info-circle text-muted"
+                v-if="heapFetchesClass"
                 content="Visibility map may be out-of-date. Consider using VACUUM or change autovacuum settings."
                 v-tippy="{arrow: true}"
               ></i>
             </div>
             <div v-if="node[nodeProps.EXCLUSIVE_COST]">
               <i class="fa fa-fw fa-dollar-sign text-muted"></i>
-              <b>Cost:</b> <span :class="'p-0 px-1 mr-1 alert ' + costClass">{{ formattedProp('EXCLUSIVE_COST') }}</span> <span class="text-muted">(Total: {{ formattedProp('TOTAL_COST') }})</span>
+              <b>Cost:</b>
+              <span :class="'p-0 px-1 mr-1 alert ' + costClass">{{ formattedProp('EXCLUSIVE_COST') }}</span>
+              <span class="text-muted">(Total: {{ formattedProp('TOTAL_COST') }})</span>
             </div>
             <div v-if="node[nodeProps.ACTUAL_LOOPS] > 1">
               <i class="fa fa-fw fa-undo text-muted"></i>
               <b>Loops:</b> <span class="px-1">{{ formattedProp('ACTUAL_LOOPS') }}
               </span>
             </div>
-
-            <!-- TIDB Custom statistic -->
-            <div v-if="node[nodeProps.DISK]" title="Disk Usage">
-              <i class="fa-hdd fa fa-fw text-muted"></i>
-              <span>
-                <b>Disk:</b> <span class="px-1">{{ formattedProp('DISK') }}</span>
-              </span>
-            </div>
-
-             <div v-if="node[nodeProps.MEMORY]" title="Memory Usage">
-              <i class="fa-memory fa fa-fw text-muted"></i>
-              <span>
-                <b>Memory:</b> <span class="px-1">{{ formattedProp('MEMORY') }}</span>
-              </span>
-            </div>
-
-             <div v-if="node[nodeProps.TASK]" title="Task">
-              <i class="fa-thumbtack fa fa-fw text-muted"></i>
-              <span>
-                <b>Task:</b> <span class="px-1">{{ formattedProp('TASK') }}</span>
-              </span>
-            </div>
-
             <!-- general tab -->
           </div>
+
           <div class="tab-pane" :class="{'show active': activeTab === 'iobuffer' }">
             <!-- iobuffer tab -->
-            <div v-if="node[nodeProps.EXCLUSIVE_IO_READ_TIME] || node[nodeProps.EXCLUSIVE_IO_WRITE_TIME]" class="mb-2">
-              <b>
-                I/O Timings:
-              </b>
+            <div v-if="" class="mb-2">
+              <b>I/O Timings:</b>
               <span v-if="node[nodeProps.EXCLUSIVE_IO_READ_TIME]" class="ml-2">
                 <b>Read:&nbsp;</b>
                 {{ formattedProp('EXCLUSIVE_IO_READ_TIME') }}
@@ -199,9 +244,7 @@
                 {{ formattedProp('EXCLUSIVE_IO_WRITE_TIME') }}
               </span>
             </div>
-            <b>
-              Blocks:
-            </b>
+            <b>Blocks:</b>
             <table class="table table-sm">
               <tr>
                 <td></td>
@@ -233,49 +276,57 @@
               </tr>
             </table>
             <div v-if="node[nodeProps.WAL_RECORDS] || node[nodeProps.WAL_BYTES]" class="mb-2">
-              <b>
-                <span class="more-info" content="Write-Ahead Logging" v-tippy>WAL</span>:
-              </b>
+              <b><span class="more-info" content="Write-Ahead Logging" v-tippy>WAL</span>:</b>
               {{ formattedProp('WAL_RECORDS') }} records <small>({{ formattedProp('WAL_BYTES') }})</small>
-              <span v-if="node[nodeProps.WAL_FPI]"> -
+              <span v-if="node[nodeProps.WAL_FPI]">-
               <span class="more-info" content="WAL Full Page Images" v-tippy>FPI</span>: {{ formattedProp('WAL_FPI') }}
               </span>
             </div>
             <!-- iobuffer tab -->
           </div>
-          <div class="tab-pane overflow-auto text-monospace" :class="{'show active': activeTab === 'output' }" v-html="formattedProp('OUTPUT')" style="max-height: 200px">
+
+          <div :class="{ 'tab-pane overflow-auto text-monospace': true, 'show active': activeTab === 'output' }"
+            v-html="formattedProp('OUTPUT')" style="max-height: 200px"
+          >
             <!-- output tab -->
           </div>
-          <div class="tab-pane" :class="{'show active': activeTab === 'workers' }" v-if="node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]">
+
+          <div :class="{ '': true, 'show active': activeTab === 'workers' }"
+            v-if="node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]"
+          >
             <!-- workers tab -->
-            <div v-if="(node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER]) && viewOptions.viewMode === viewModes.FULL">
-              <b>Workers planned: </b> <span class="px-1">{{ node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER] }}</span>
+            <div v-if="">
+              <b>Workers planned: </b>
+              <span class="px-1">{{ node[nodeProps.WORKERS_PLANNED] || node[nodeProps.WORKERS_PLANNED_BY_GATHER] }}</span>
               <em v-if="!node[nodeProps.WORKERS_PLANNED] && !node[nodeProps.WORKERS] && (!plan.isVerbose || !plan.isAnalyze)" class="text-warning">
                 <i class="fa fa-exclamation-triangle cursor-help" :content="getHelpMessage('fuzzy needs verbose')" v-tippy></i>
               </em>
             </div>
-            <div v-if="node[nodeProps.WORKERS_LAUNCHED] && viewOptions.viewMode === viewModes.FULL">
-              <b>Workers launched: </b> <span class="px-1">{{ node[nodeProps.WORKERS_LAUNCHED] }}</span>
+            <div v-if="">
+              <b>Workers launched: </b>
+              <span class="px-1">{{ node[nodeProps.WORKERS_LAUNCHED] }}</span>
             </div>
-            <div v-if="!workersLaunchedCount && node[nodeProps.WORKERS_PLANNED_BY_GATHER]" class="text-muted">
+            <div v-if="" class="text-muted">
               <em>
                 Detailed information is not available.
-                  <i class="fa fa-info-circle cursor-help" :content="getHelpMessage('workers detailed info missing')" v-tippy></i>
+                <i class="fa fa-info-circle cursor-help" :content="getHelpMessage('workers detailed info missing')" v-tippy></i>
               </em>
             </div>
-
-            <div class="accordion" v-if="lodash.isArray(node[nodeProps.WORKERS])">
+            <div class="accordion">
               <template v-for="(worker, index) in node[nodeProps.WORKERS]">
-                <div class="card">
+                <div class="card" v-bind:key="index">
                   <div class="card-header p-0">
-                    <button class="btn btn-link btn-sm text-secondary" type="button" data-toggle="collapse" :data-target="'#collapse-' + _uid + '-' + index" style="font-size: inherit;">
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm text-secondary"
+                      data-toggle="collapse"
+                      :data-target="`#collapse-${_uid}-${index}`" style="font-size: inherit;">
                       <i class="fa fa-chevron-right fa-fw"></i>
                       <i class="fa fa-chevron-down fa-fw"></i>
                       Worker {{ worker[workerProps.WORKER_NUMBER] }}
                     </button>
                   </div>
-
-                  <div :id="'collapse-' + _uid + '-' + index" class="collapse">
+                  <div :id="`collapse-${_uid}-${index}`" class="collapse">
                     <div class="card-body p-0">
                       <table class="table table-sm prop-list mb-0">
                         <tr v-for="(value, key) in worker" v-if="shouldShowProp(key, value)">
@@ -290,10 +341,12 @@
             </div>
             <!-- workers tab -->
           </div>
+
+          <!-- misc tab begin -->
           <div class="tab-pane" :class="{'show active': activeTab === 'misc'}">
             <!-- misc tab -->
             <table class="table table-sm prop-list">
-              <tr v-for="prop in props" v-if="shouldShowProp(prop.key, prop.value)">
+              <tr v-for="(prop, index) in props" v-if="shouldShowProp(prop.key, prop.value)" v-bind:key="index">
                 <td width="40%">{{prop.key}}</td>
                 <td v-html="$options.filters.formatNodeProp(prop.key, prop.value, true)"></td>
               </tr>
@@ -302,30 +355,48 @@
             <div class="text-muted text-right"><em>* Calculated value</em></div>
             <!-- misc tab -->
           </div>
+          <!-- misc tab end -->
         </div>
+        <!-- Uncollapsed Card Body -->
 
       </div>
     </div>
+
+    <!-- Render Child Plans -->
     <ul v-if="plans" :class="['node-children', {'collapsed': collapsed}]">
-      <li v-for="subnode in plans">
-        <plan-node :node="subnode" :plan="plan" :viewOptions="viewOptions" :eventBus="eventBus">
+      <li v-for="(subnode, index) in plans" v-bind:key="index">
+        <plan-node
+          :node="subnode"
+          :plan="plan"
+          :viewOptions="viewOptions"
+          :eventBus="eventBus"
+          :onMouseOverNode="onMouseOverNode"
+          :onMouseOutNode="onMouseOutNode"
+          ref="root"
+        >
           <template v-slot:nodeindex="{ node }">
             <slot name="nodeindex" v-bind:node="node"></slot>
           </template>
         </plan-node>
       </li>
     </ul>
+    <!-- Render Child Plans -->
+
   </div>
 </template>
 
 <script lang="ts">
+import * as _ from 'lodash';
+import classnames from 'classnames';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+
 import { HelpService } from '@/services/help-service';
 import { ColorService } from '@/services/color-service';
 import { cost, duration, factor, formatNodeProp, keysToString, sortKeys, truncate, rows } from '@/filters';
-import { EstimateDirection, HighlightType, NodeProp, nodePropTypes, Orientation,
-         PropType, ViewMode, WorkerProp } from '@/enums';
-import * as _ from 'lodash';
+import {
+  EstimateDirection, HighlightType, NodeProp, NotMiscProperties,
+  nodePropTypes, Orientation, PropType, ViewMode, WorkerProp,
+} from '@/enums';
 
 @Component({
   name: 'plan-node',
@@ -340,13 +411,18 @@ import * as _ from 'lodash';
     rows,
   },
 })
+
 export default class PlanNode extends Vue {
   @Prop(Object) public node!: any;
+  @Prop() public onMouseOverNode: any;
+  @Prop() public onMouseOutNode: any;
   public executionTimePercent: number = NaN;
   public selected: boolean = false;
   @Prop(Object) private plan!: any;
   @Prop(Object) private viewOptions!: any;
   @Prop() private eventBus!: InstanceType<typeof Vue>;
+
+  private notMiscProperties: string[] = notMiscProperties;
 
   // UI flags
   private showDetails: boolean = false;
@@ -380,68 +456,32 @@ export default class PlanNode extends Vue {
   private colorService = new ColorService();
   private lodash = _;
 
-  // Returns the list of properties that have already been displayed either in
-  // the main panel or in other detailed tabs.
-  private notMiscProperties: string[] = [
-      NodeProp.NODE_TYPE,
-      NodeProp.CTE_NAME,
-      NodeProp.EXCLUSIVE_DURATION,
-      NodeProp.EXCLUSIVE_COST,
-      NodeProp.TOTAL_COST,
-      NodeProp.PLAN_ROWS,
-      NodeProp.ACTUAL_ROWS,
-      NodeProp.ACTUAL_LOOPS,
-      NodeProp.OUTPUT,
-      NodeProp.WORKERS,
-      NodeProp.WORKERS_PLANNED,
-      NodeProp.WORKERS_LAUNCHED,
-      NodeProp.EXCLUSIVE_SHARED_HIT_BLOCKS,
-      NodeProp.EXCLUSIVE_SHARED_READ_BLOCKS,
-      NodeProp.EXCLUSIVE_SHARED_DIRTIED_BLOCKS,
-      NodeProp.EXCLUSIVE_SHARED_WRITTEN_BLOCKS,
-      NodeProp.EXCLUSIVE_TEMP_READ_BLOCKS,
-      NodeProp.EXCLUSIVE_TEMP_WRITTEN_BLOCKS,
-      NodeProp.EXCLUSIVE_LOCAL_HIT_BLOCKS,
-      NodeProp.EXCLUSIVE_LOCAL_READ_BLOCKS,
-      NodeProp.EXCLUSIVE_LOCAL_DIRTIED_BLOCKS,
-      NodeProp.EXCLUSIVE_LOCAL_WRITTEN_BLOCKS,
-      NodeProp.SHARED_HIT_BLOCKS,
-      NodeProp.SHARED_READ_BLOCKS,
-      NodeProp.SHARED_DIRTIED_BLOCKS,
-      NodeProp.SHARED_WRITTEN_BLOCKS,
-      NodeProp.TEMP_READ_BLOCKS,
-      NodeProp.TEMP_WRITTEN_BLOCKS,
-      NodeProp.LOCAL_HIT_BLOCKS,
-      NodeProp.LOCAL_READ_BLOCKS,
-      NodeProp.LOCAL_DIRTIED_BLOCKS,
-      NodeProp.LOCAL_WRITTEN_BLOCKS,
-      NodeProp.PLANNER_ESTIMATE_FACTOR,
-      NodeProp.PLANNER_ESTIMATE_DIRECTION,
-      NodeProp.SUBPLAN_NAME,
-      NodeProp.GROUP_KEY,
-      NodeProp.HASH_CONDITION,
-      NodeProp.JOIN_TYPE,
-      NodeProp.INDEX_NAME,
-      NodeProp.HASH_CONDITION,
-      NodeProp.EXCLUSIVE_IO_READ_TIME,
-      NodeProp.EXCLUSIVE_IO_WRITE_TIME,
-      NodeProp.IO_READ_TIME, // Exclusive value already shown in IO tab
-      NodeProp.IO_WRITE_TIME, // Exclusive value already shown in IO tab
-      NodeProp.HEAP_FETCHES,
-      NodeProp.WAL_RECORDS,
-      NodeProp.WAL_BYTES,
-      NodeProp.WAL_FPI,
-      NodeProp.NODE_ID,
-      NodeProp.ROWS_REMOVED_BY_FILTER,
-      NodeProp.ROWS_REMOVED_BY_JOIN_FILTER,
-      NodeProp.ACTUAL_ROWS_REVISED,
-      NodeProp.PLAN_ROWS_REVISED,
-      NodeProp.ROWS_REMOVED_BY_FILTER_REVISED,
-      NodeProp.ROWS_REMOVED_BY_JOIN_FILTER_REVISED,
-  ];
-
   public setShowDetails(showDetails: boolean): void {
     this.showDetails = showDetails;
+  }
+
+  private get wrapperClassNames(): string {
+    return classnames({
+      'subplan': this.node[this.nodeProps.SUBPLAN_NAME],
+      'd-flex flex-column align-items-center': this.viewOptions.orientation === this.orientations.TWOD,
+    });
+  }
+
+  private get planNodeClassName(): string {
+    return classnames('text-left plan-node', {
+      'detailed': this.showDetails,
+      'never-executed': this.isNeverExecuted,
+      'parallel': this.workersPlannedCount,
+      'selected': this.selected,
+    });
+  }
+
+  private workersCountClassName(index: number): string {
+    return 
+  }
+
+  private get collapseIconClassName(): string {
+    return 
   }
 
   private created(): void {
@@ -514,7 +554,6 @@ export default class PlanNode extends Vue {
   private getNodeName(): string {
     let nodeName = this.isParallelAware ? 'Parallel ' : '';
     nodeName += this.node[NodeProp.NODE_TYPE];
-    nodeName = nodeName.replace(/_\d*?$/g, '');
     if (this.viewOptions.viewMode === ViewMode.DOT && !this.showDetails) {
       return nodeName.replace(/[^A-Z]/g, '');
     }
@@ -592,7 +631,11 @@ export default class PlanNode extends Vue {
   }
 
   private getBarColor(percent: number) {
-    return this.colorService.numberToColorHsl(percent);
+    return this;
+  }
+
+  private tipIconClassName(className: string) {
+    return classnames(`p-0 d-inline-block mb-0 ml-1 text-nowrap alert ${className}`);
   }
 
   private get durationClass() {
@@ -688,7 +731,7 @@ export default class PlanNode extends Vue {
   }
 
   private get filterTooltip(): string {
-    return this.rowsRemovedPercentString + '% of rows removed by filter';
+    return this.rowsRemovedPercentString + '';
   }
 
   private get workersLaunchedCount(): number {
@@ -721,7 +764,6 @@ export default class PlanNode extends Vue {
   }
 
   private shouldShowProp(key: string, value: any): boolean {
-
     return (value ||
             nodePropTypes[key] === PropType.increment ||
             key === NodeProp.ACTUAL_ROWS) &&

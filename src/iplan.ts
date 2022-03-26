@@ -1,5 +1,11 @@
-import PlanNode from '@/components/PlanNode.vue';
-import { BufferLocation } from '@/enums';
+/**
+ * Whole plan interfaces.
+ */
+
+import {
+  BufferLocation, HighlightType,
+  ViewMode, Orientation,
+} from '@/enums';
 
 export interface IPlan {
   id: string;
@@ -12,6 +18,28 @@ export interface IPlan {
   ctes: any[];
   isAnalyze: boolean;
   isVerbose: boolean;
+}
+
+export interface IViewOptions {
+  menuHidden: boolean,
+  showHighlightBar: boolean,
+  showPlanStats: boolean,
+  highlightType: HighlightType,
+  viewMode: ViewMode,
+  orientation: Orientation,
+  showDiagram: boolean,
+  diagramWidth: number,
+}
+
+export interface IViewOptionsAnyOne {
+  menuHidden?: boolean,
+  showHighlightBar?: boolean,
+  showPlanStats?: boolean,
+  highlightType?: HighlightType,
+  viewMode?: ViewMode,
+  orientation?: Orientation,
+  showDiagram?: boolean,
+  diagramWidth?: number,
 }
 
 export interface ITrigger {
@@ -30,7 +58,7 @@ export interface IPlanStats {
   maxBlocks?: IBlocksStats;
   triggers?: ITrigger[];
   jitTime?: number;
-  settings?: {[key: string]: string};
+  settings?: { [key: string]: string };
 }
 
 export type IBlocksStats = {
