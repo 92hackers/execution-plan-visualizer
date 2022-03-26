@@ -326,8 +326,8 @@ export function PlanNode({
         />
         <div
           className='plan-node-body card'
-          onMouseEnter={() => console.log(`enter node: ${node.nodeId}`)}
-          onMouseLeave={() => console.log(`leave node: ${node.nodeId}`)}
+          // onMouseEnter={() => console.log(`enter node: ${node.nodeId}`)}
+          // onMouseLeave={() => console.log(`leave node: ${node.nodeId}`)}
         >
           <PlanNodeHeader
             node={node}
