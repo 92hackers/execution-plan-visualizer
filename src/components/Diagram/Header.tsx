@@ -31,7 +31,7 @@ export function DiagramHeader({
   const handleBtnClick = (metric: Metric) => () => setViewOptions({ ...viewOptions, metric })
 
   return (
-    <div className="flex-shrink-0">
+    <div className="flex-shrink-0 py-2">
       <div className="form-group text-center my-1">
         <div className="btn-group btn-group-xs">
           <button className={btnClassName(metrics.time)} onClick={handleBtnClick(metrics.time)}>time</button>

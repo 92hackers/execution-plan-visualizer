@@ -21,25 +21,25 @@ export function BufferTypeComp({
             {
               viewOptions.buffersMetric !== BufferLocation.temp && (
                 <li className="list-inline-item">
-                  <span className="bg-hit rounded" />
+                  <span className="bg-hit rounded mr-1" />
                   Hit
                 </li>
               )
             }
             <li className="list-inline-item">
-              <span className="bg-read"></span>
+              <span className="bg-read mr-1"></span>
               Read
             </li>
             {
               viewOptions.buffersMetric !== BufferLocation.temp && (
                 <li className="list-inline-item">
-                  <span className="bg-dirtied"></span>
+                  <span className="bg-dirtied mr-1"></span>
                   Dirtied
                 </li>
               )
             }
             <li className="list-inline-item">
-              <span className="bg-written"></span>
+              <span className="bg-written mr-1"></span>
               Written
             </li>
           </ul>

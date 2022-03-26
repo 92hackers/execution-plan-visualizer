@@ -43,12 +43,12 @@ export function EstimationProgressBar({
   plans,
   viewOptions,
 }: EstimationProgressBarProps) {
-  if (viewOptions.metric == Metric.estimate_factor) return null
+  if (viewOptions.metric !== Metric.estimate_factor) return null
   const isUnderDirection = node[NodeProp.PLANNER_ESTIMATE_DIRECTION] === EstimateDirection.under
   const isOverDirection = node[NodeProp.PLANNER_ESTIMATE_DIRECTION] === EstimateDirection.over
   return (
     <div
-      className="progress rounded-0 align-items-center bg-transparent justify-content-center"
+      className="progress rounded-0 align-items-center bg-transparent xxxx justify-content-center"
       style={{ height: 10 }}
       key={'node' + index + 'estimation'}
     >

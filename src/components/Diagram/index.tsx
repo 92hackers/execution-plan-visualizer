@@ -13,6 +13,7 @@ import Node from "@/inode";
 import { DiagramHeader } from "./Header";
 import { BufferLocationComp } from "./BufferLocation";
 import { BufferTypeComp } from "./BufferType";
+import { DiagramTable } from "./Table";
 
 const initViewOptions: IDiagramViewOptions = {
   metric: Metric.time,
@@ -42,15 +43,20 @@ function flatten(output: any[], level: number, node: any,
 
 export interface PlanDiagramProps {
   plan: IPlan,
+  highlightNode: string,
+  setHighlightNode: (nodeId: string) => void,
+  selectedNodeId: string,
+  setSelectedNodeId: (nodeId: string) => void,
 }
 export function PlanDiagram({
   plan,
+  highlightNode,
+  setHighlightNode,
+  selectedNodeId,
+  setSelectedNodeId,
 }: PlanDiagramProps) {
   const [viewOptions, setViewOptions] = useState(initViewOptions)
   const [allPlans, setAllPlans] = useState<any []>([])
-  const [highlightedNode, setHighlightedNode] = useState<Node | null>(null)
-
-  const handleHighlightNode = (node: Node) => setHighlightedNode(node)
 
   useEffect(() => {
     const plans: any[][] = [[]]
@@ -66,6 +72,7 @@ export function PlanDiagram({
       plans.push(flat);
     })
 
+    // All flattened plans.
     setAllPlans(plans)
 
     // switch to the first buffers tab if data not available for the currently
@@ -78,9 +85,12 @@ export function PlanDiagram({
   }, [plan])
 
 
+  const handleClickCTE = (subplanName: string) => console.log(subplanName)
+  const handleMouseOverNode = (nodeId: string) => setHighlightNode(nodeId)
+  const handleMouseOutNode = () => setHighlightNode('')
 
   return (
-    <div className="diagram">
+    <div className="diagram d-flex flex-column flex-grow-1 overflow-hidden plan-diagram">
       <DiagramHeader
         viewOptions={viewOptions}
         setViewOptions={setViewOptions}
@@ -96,6 +106,16 @@ export function PlanDiagram({
             viewOptions={viewOptions}
           />
         }
+      />
+      <DiagramTable
+        plan={plan}
+        plans={allPlans}
+        selected={selectedNodeId}
+        highlightedNode={highlightNode}
+        viewOptions={viewOptions}
+        onClickCTE={handleClickCTE}
+        onMouseOverNode={handleMouseOverNode}
+        onMouseOutNode={handleMouseOutNode}
       />
     </div>
   )

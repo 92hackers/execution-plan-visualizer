@@ -52,7 +52,7 @@ export function PlanStats({
     <div className="plan-stats flex-shrink-0 d-flex border-bottom border-top form-inline">
       <div className="d-inline-block px-2">
         Execution time:
-        <span>
+        <span className='pl-2'>
           {
             planStats.executionTime ? (
               <span className="stat-value">{filters.duration(planStats.executionTime)}</span>
@@ -69,7 +69,7 @@ export function PlanStats({
       </div>
       <div className="d-inline-block border-left px-2">
         Planning time:
-        <span>
+        <span className='pl-2'>
           {
             planStats.planningTime ? (
               <span className="stat-value">
@@ -94,7 +94,7 @@ export function PlanStats({
           planStats.jitTime && (
             <div className="d-inline-block border-left px-2">
               JIT:
-              <span className="stat-value">
+              <span className="stat-value pl-2">
                 <span
                   className={`mb-0 p-0 px-1 alert ${planningTimeClass(planStats.jitTime / (planStats.executionTime || 0) * 100)}`}
                   dangerouslySetInnerHTML={{ __html: filters.duration(planStats.jitTime) }}

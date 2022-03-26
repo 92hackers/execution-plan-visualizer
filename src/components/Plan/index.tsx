@@ -70,6 +70,7 @@ function getPlanStats(content: any) {
   }
 }
 
+
 export interface PlanProps {
   planSource: string,
   planQuery: string,
@@ -86,12 +87,26 @@ function Plan({
   const [plan, setPlan] = useState(initPlan)
   const [rootNode, setRootNode] = useState(new Node(''))
 
+  function onHashChange(): void {
+    const reg = /#([a-zA-Z]*)(\/node\/([0-9]*))*/;
+    const matches = reg.exec(window.location.hash);
+    if (matches) {
+      const tab = matches[1] || 'plan';
+      setActiveTab(tab);
+    }
+  }
+
   // Load cached view options from localStorage
+  // bind hashchange event
   useEffect(() => {
     const savedOptions = localStorage.getItem('viewOptions');
     if (savedOptions) {
       handleViewOptionsChange({ ...JSON.parse(savedOptions)})
     }
+
+    // Bind hash change event.
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
   // Parse plan data

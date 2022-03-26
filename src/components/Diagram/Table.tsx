@@ -8,10 +8,12 @@ import classNames from "classnames";
 import Tippy from "@tippyjs/react";
 
 import { IDiagramViewOptions } from "@/idiagram";
-import { BufferLocation, BufferType, EstimateDirection, Metric, NodeProp } from "@/enums";
+import { BufferLocation, EstimateDirection, Metric, NodeProp } from "@/enums";
 import { IPlan } from "@/iplan";
 import Node from "@/inode";
 import * as filters from '@/filters'
+
+import { TableProgressBar } from "./TableProgressBar";
 
 function isCTE(planName: string): boolean {
   return _.startsWith(planName, 'CTE');
@@ -21,11 +23,11 @@ export interface DiagramTableProps {
   plan: IPlan,
   plans: any[],
   selected: string,
-  highlightedNode: Node,
+  highlightedNode: string,
   viewOptions: IDiagramViewOptions,
   onClickCTE: (subplanName: string) => void,
   onMouseOverNode: (nodeId: string) => void,
-  onMouseOutNode: (nodeId: string) => void,
+  onMouseOutNode: () => void,
 }
 export function DiagramTable({
   plan,
@@ -171,19 +173,21 @@ export function DiagramTable({
 
   return (
     <div className="overflow-auto flex-grow-1">
-      { !dataAvailable && (
-        <div className="p-2 text-center text-muted">
-          <em>
-            No data available
-          </em>
-        </div>
-      ) }
+      {
+        !dataAvailable && (
+          <div className="p-2 text-center text-muted">
+            <em>
+              No data available
+            </em>
+          </div>
+        )
+      }
       {
         dataAvailable && (
           <table className="m-1">
             {
               plans.map((flat: any[], index: number) => (
-                <tbody>
+                <tbody key={index}>
                   {
                     index === 0 && plans.length > 1 && (
                       <tr><th colSpan={3} className="subplan">Main Query Plan</th></tr>
@@ -204,8 +208,8 @@ export function DiagramTable({
                             >
                               <span className="three-lines">
                                 {
-                                  _.range(row[0]).map((i) => (
-                                    <span>
+                                  _.range(row[0]).map((i, innerIndex: number) => (
+                                    <span key={innerIndex}>
                                       <span>
                                         {
                                           _.indexOf(row[3], i) !== -1 && <span>|</span>
@@ -235,15 +239,18 @@ export function DiagramTable({
 
                       const node = row[1]
                       return (
-                        <Tippy content={getTooltipContent(node)}>
+                        <Tippy
+                          content={<span dangerouslySetInnerHTML={{ __html: getTooltipContent(node)}} />}
+                          key={index}
+                        >
                           <tr
                             key={index}
                             className={classNames('no-focus-outline node', {
-                              'selected': node.nodeId === selected,
+                              'selected': node.nodeId.toString() === selected,
                               'highlight': node.nodeId === highlightedNode,
                             })}
                             onMouseEnter={() => onMouseOverNode(node.nodeId)}
-                            onMouseLeave={() => onMouseOutNode(node.nodeId)}
+                            onMouseLeave={onMouseOutNode}
                           >
                             <td className="node-index">
                               <a
@@ -256,8 +263,8 @@ export function DiagramTable({
                             <td className="node-type pr-2">
                               <span className="tree-lines">
                                 {
-                                  _.range(row[0]).map((i) => (
-                                    <span>
+                                  _.range(row[0]).map((i, innerIndex: number) => (
+                                    <span key={innerIndex}>
                                       <span>
                                         {
                                           _.indexOf(row[3], i) !== -1 && <span>|</span>
@@ -289,9 +296,13 @@ export function DiagramTable({
                               </span>
                               {node[NodeProp.NODE_TYPE]}
                             </td>
-                            <td>
-{/*  progress bar here */}
-                            </td>
+                            <TableProgressBar
+                              index={index}
+                              node={node}
+                              plan={plan}
+                              plans={plans}
+                              viewOptions={viewOptions}
+                            />
                           </tr>
                         </Tippy>
                       )

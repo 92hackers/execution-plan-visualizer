@@ -41,10 +41,14 @@ export function PlanNodeHeader({
       node[NodeProp.WORKERS_PLANNED] === node[NodeProp.WORKERS_LAUNCHED]
   }, [node])
 
+  const handleShowDetails = (showDetails: boolean) => () => {
+    setShowDetails(!showDetails)
+  }
+
   return (
     <div
       className='card-body header no-focus-outline'
-      onClick={() => setShowDetails(!showDetails)}
+      onClick={handleShowDetails(showDetails)}
     >
       {Title}
       {HeaderDetail}

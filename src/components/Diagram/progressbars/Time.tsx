@@ -46,7 +46,7 @@ export function TimeProgressBar({
         className="progress-bar bg-secondary-light"
         role="progressbar"
         style={{
-          width: `${(node[NodeProp.ACTUAL_TOTAL_TIME] - node[NodeProp.EXCLUSIVE_DURATION]) / planTime}%`,
+          width: `${(node[NodeProp.ACTUAL_TOTAL_TIME] - node[NodeProp.EXCLUSIVE_DURATION]) / planTime * 100}%`,
           height: 5,
         }}
       />

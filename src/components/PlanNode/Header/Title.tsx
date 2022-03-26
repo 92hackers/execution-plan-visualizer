@@ -50,6 +50,7 @@ export function HeaderTitle({
         <a
           className="font-weight-normal small mr-1"
           href={`#plan/node/${node.nodeId}`}
+          onClick={(e) => e.stopPropagation()}
         >
           #{node.nodeId}
         </a>

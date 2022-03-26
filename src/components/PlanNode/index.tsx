@@ -38,8 +38,8 @@ export interface PlanNodeProps {
   plan: IPlan,
   node: Node,
   viewOptions: IViewOptions,
-  selectedNodeId: number,
-  setSelectedNodeId: (id: number) => void,
+  selectedNodeId: string,
+  setSelectedNodeId: (id: string) => void,
 }
 
 export function PlanNode({
@@ -80,7 +80,7 @@ export function PlanNode({
     'detailed': showDetails,
     'never-executed': isNeverExecuted,
     'parallel': workersPlannedReversed.length > 0,
-    'selected': selectedNodeId === node.nodeId, // TODO: nodeId is not formatted onto node type.
+    'selected': selectedNodeId === node.nodeId.toString(), // TODO: nodeId is not formatted onto node type.
   });
 
   const nodeName: string = useMemo((): string => {

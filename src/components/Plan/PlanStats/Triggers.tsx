@@ -34,7 +34,7 @@ export function Triggers({ planStats, triggers }: TriggersProps) {
 
   return (
     <div className="d-inline-block border-left px-2 position-relative">
-      <span className="stat-label">Triggers: </span>
+      <span className="stat-label pr-1">Triggers: </span>
       {
         triggers.length ? (
           <span className="stat-value">
