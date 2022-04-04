@@ -40,6 +40,7 @@ export interface PlanNodeProps {
   viewOptions: IViewOptions,
   selectedNodeId: string,
   setSelectedNodeId: (id: string) => void,
+  setHeighlightNodeId: (id: string) => void,
 }
 
 export function PlanNode({
@@ -48,6 +49,7 @@ export function PlanNode({
   viewOptions,
   selectedNodeId,
   setSelectedNodeId,
+  setHeighlightNodeId,
 }: PlanNodeProps) {
   const [activeTab, setActiveTab] = useState(PlanNodeCardTab.GENERAL)
   const [showDetails, setShowDetails] = useState(false)
@@ -314,6 +316,13 @@ export function PlanNode({
     return parseInt(node[NodeProp.WORKERS], 0);
   }, [node])
 
+  function handleMouseOver(): void {
+    return setHeighlightNodeId(node.nodeId)
+  }
+  function handleMouseOut(): void {
+    return setHeighlightNodeId('')
+  }
+
   return (
     <div className={wrapperClass}>
       {node[NodeProp.SUBPLAN_NAME] && <h4>{node[NodeProp.SUBPLAN_NAME]}</h4>}
@@ -326,8 +335,8 @@ export function PlanNode({
         />
         <div
           className='plan-node-body card'
-          // onMouseEnter={() => console.log(`enter node: ${node.nodeId}`)}
-          // onMouseLeave={() => console.log(`leave node: ${node.nodeId}`)}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseOut}
         >
           <PlanNodeHeader
             node={node}
@@ -438,6 +447,7 @@ export function PlanNode({
                     viewOptions={viewOptions}
                     selectedNodeId={selectedNodeId}
                     setSelectedNodeId={setSelectedNodeId}
+                    setHeighlightNodeId={setHeighlightNodeId}
                   />
                 </li>
               ))

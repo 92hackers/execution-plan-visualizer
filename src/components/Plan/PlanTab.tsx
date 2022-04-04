@@ -46,8 +46,11 @@ export function PlanTab({
 
   useEffect(() => {
     onHashChange()
-    // Bind hash change event.
+
+    // Bind hash change event listener.
     window.addEventListener('hashchange', onHashChange)
+
+    // Unbind the event listener
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
@@ -71,6 +74,7 @@ export function PlanTab({
           onChange={handleResize}
           size={viewOptions.showDiagram ? viewOptions.diagramWidth : 0}
           minSize={0}
+          resizerStyle={{ borderColor: '#999' }}
         >
           <Pane className="d-flex">
             <PlanDiagram
@@ -93,6 +97,7 @@ export function PlanTab({
                   viewOptions={viewOptions}
                   selectedNodeId={selectedNodeId}
                   setSelectedNodeId={setSelectedNodeId}
+                  setHeighlightNodeId={setHighlightNode}
                 />
               </li>
             </ul>
@@ -100,14 +105,15 @@ export function PlanTab({
               plan.ctes.length > 0 && (
                 <ul className="init-plans p-2 mb-0">
                   {
-                    plan.ctes.map((node: Node) => (
-                      <li>
+                    plan.ctes.map((node: Node, index: number) => (
+                      <li key={index}>
                         <PlanNode
                           node={node}
                           plan={plan}
                           viewOptions={viewOptions}
                           selectedNodeId={selectedNodeId}
                           setSelectedNodeId={setSelectedNodeId}
+                          setHeighlightNodeId={setHighlightNode}
                         />
                       </li>
                     ))
