@@ -46,8 +46,11 @@ export function PlanTab({
 
   useEffect(() => {
     onHashChange()
-    // Bind hash change event.
+
+    // Bind hash change event listener.
     window.addEventListener('hashchange', onHashChange)
+
+    // Unbind the event listener
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
