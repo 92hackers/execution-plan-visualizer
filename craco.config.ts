@@ -15,6 +15,9 @@ const config: any = {
     },
     resolve: {
       extensions: ['.ts', '.js', '.tsx'],
+      fallback: {
+        stream: require.resolve('stream-browserify'),
+      },
     },
     configure: {
       module: {
