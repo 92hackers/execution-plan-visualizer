@@ -94,6 +94,7 @@ export function PlanTab({
                   viewOptions={viewOptions}
                   selectedNodeId={selectedNodeId}
                   setSelectedNodeId={setSelectedNodeId}
+                  setHeighlightNodeId={setHighlightNode}
                 />
               </li>
             </ul>
@@ -109,6 +110,7 @@ export function PlanTab({
                           viewOptions={viewOptions}
                           selectedNodeId={selectedNodeId}
                           setSelectedNodeId={setSelectedNodeId}
+                          setHeighlightNodeId={setHighlightNode}
                         />
                       </li>
                     ))
